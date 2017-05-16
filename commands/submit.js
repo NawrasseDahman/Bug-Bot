@@ -115,7 +115,8 @@ let submitCommand = {
         reportCapLinks = reportCapLinks.replace(/(\*)/gi, '\\$&');
 
         checkSectionsExist(userID, reportCapLinks, channelID, sectionNames, db).then((extraSystemSettings) => {
-          let allSections = sections(reportCapLinks + extraSystemSettings, msg, bot);
+          let newReportString = reportCapLinks + extraSystemSettings;
+          let allSections = sections(newReportString, msg, bot);
 
           let stepsToRepro = allSections["steps to reproduce"];
           stepsToRepro = stepsToRepro.replace(/(-)\s/gi, '\n$&');
@@ -161,12 +162,12 @@ let submitCommand = {
 
               let queueReportString = "\n**Short description:** " + header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
 
-              queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, reportCapLinks, queueReportString, header);
+              queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, newReportString, queueReportString, header);
             });
           } else {
             let queueReportString = "\n**Short description:** " + header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
 
-            queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, reportCapLinks, queueReportString, header);
+            queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, newReportString, queueReportString, header);
           }
         }).catch((errorMessage)=>{
           utils.botReply(bot, userID, channelID, errorMessage, command, msgID, true);

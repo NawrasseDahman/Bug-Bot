@@ -1,9 +1,9 @@
 "use strict";
 const config = require('../config');
 const configEdit = require('../configEdit');
-let utils = require('./utils');
-let qutils = require('./queueUtils');
-let tutils = require('./trelloUtils');
+const utils = require('./utils');
+const qutils = require('./queueUtils');
+const tutils = require('./trelloUtils');
 
 let adminUtils = {
   queueOverride: function(bot, channelID, userTag, userID, command, msg, trello, db, key, ADcontent) {

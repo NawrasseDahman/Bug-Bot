@@ -93,7 +93,7 @@ function reproSetup(bot, userID, channelID, msgID, trello, db, reproCnt, reportK
       if(!!rtndData) {
         addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, rtndData.content, rtndData.id, null);
       } else {
-        addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID, reproduction, emoji, reproCnt, null, msgID, null, command, reproCount);
+        addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID, reproduction, emoji, reproCnt, null, msgID, null, command, null);
       }
     }).catch(error => {console.log("Repro Legacy\n" + error);});
   }
@@ -120,7 +120,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
 
         let whichClient = reproCnt.match(/(-l|-m|-w|-a|-i)/i);
         let system;
-        
+
         if(!reproCnt){
           utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msgID, false);
           return;

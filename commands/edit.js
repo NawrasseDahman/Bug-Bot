@@ -107,7 +107,7 @@ let edit = {
                 let editReport = oldReport.content.replace(newRegex, utils.toTitleCase(editSection) + ":** " + cleanNewContent);
                 bot.editMessage(config.channels.queueChannel, report.reportMsgID, editReport).then(() => {
                   utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msg.id, false);
-                  bot.createMessage(config.channels.modLogChannel, "✏ **" + userTag + "** edited **#" + key + "** `" + utils.toTitleCase(editSection) + "`");
+                  bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + userTag + "** edited **#" + key + "** `" + utils.toTitleCase(editSection) + "`");
                 }).catch((error) => {
                   console.log("Edit | msgQueue\n" + error);
                 });

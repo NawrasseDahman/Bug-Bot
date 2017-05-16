@@ -10,7 +10,7 @@ function addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID
       bot.createMessage(channelID, "Something went wrong, please try again. Mods have been notified");
       bot.createMessage(config.channels.modLogChannel, "Something went wrong\n" + error);
     }else{
-      if(reproCount <= customConfig.reproAttempts) {
+      if(!!reproCount && reproCount <= customConfig.reproAttempts) {
         if(!!userID){ //userID = null when repro comes from Queue report
 
           if(!!editMsgID && !!editMsg) { //check that message exists before modifying it
@@ -19,11 +19,12 @@ function addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID
         }else{ // add repro from queue report
           bot.editMessage(channelID, editMsgID, editMsg).catch((error) => {console.log("addRepro Queue EditMsg\n" + error);});
         }
-
-        if(!!command) {
-          utils.botReply(bot, userID, channelID, "your reproduction has been added to the ticket.", command, msgID, false);
-        }
       }
+
+      if(!!command) {
+        utils.botReply(bot, userID, channelID, "your reproduction has been added to the ticket.", command, msgID, false);
+      }
+
       bot.createMessage(config.channels.modLogChannel, emoji + " **" + userTag + "** " + reproduction + " `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">");
     }
   }

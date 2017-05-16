@@ -42,7 +42,7 @@ let addNote = {
     let note = matchContent[2];
 
     note = note.replace(/(\*|`|\~|\_)/gi, "\\$&");
-    
+
     db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key, function(error, reportInfo) {
       let trelloURL;
       if(!!reportInfo) {
@@ -55,7 +55,7 @@ let addNote = {
           bot.getMessage(channelID, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
-              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "** | `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate);
             }
@@ -67,7 +67,7 @@ let addNote = {
           bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("Report ID: **" + key + "**");
-              let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + userTag + "** | `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate);
             }
@@ -82,7 +82,7 @@ let addNote = {
             });
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
-              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "** | `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(channelID, reportMsg.id, editMsgCreate);
             }

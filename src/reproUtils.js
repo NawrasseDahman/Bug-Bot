@@ -120,28 +120,28 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
 
         let whichClient = reproCnt.match(/(-l|-m|-w|-a|-i)/i);
         let system;
-
+        
         if(!reproCnt){
           utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msgID, false);
           return;
         } else if(!!whichClient) {
-          if(whichClient[1] === "-c") {
-            system = "canary";
+          if(whichClient[1] === "-w") {
+            system = "windows";
           } else if(whichClient[1] === "-i") {
             system = "ios";
           } else if(whichClient[1] === "-l") {
-            system = "checkOS";
+            system = "linux";
           } else if(whichClient[1] === "-m") {
             system = "macOS";
           } else if(whichClient[1] === "-a") {
             system = "android";
           }
-          db.get("SELECT " + system + " FROM users WHERE id = ?", [userID], function(error, usrSys) {
+          db.get("SELECT " + system + " FROM users WHERE userID = ?", [userID], function(error, usrSys) {
             if(!!usrSys){
               reproCnt = reproCnt.replace(/(-l|-m|-w|-a|-i)/i, usrSys[system]);
               reproSetup(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, report);
             } else {
-              utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our system. You can add it with `!addsys " + whichClient[1] + " new System`", command, msgID, false);
+              utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our system. You can add it with `!storeinfo " + whichClient[1] + " | new System`", command, msgID, false);
               return;
             }
           });

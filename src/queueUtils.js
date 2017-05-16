@@ -74,8 +74,8 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
         let canRepro;
         db.run("UPDATE reportQueueInfo SET info = ?, stance = 'approve' WHERE id = ? AND userID = ? AND stance = 'deny' OR stance = 'approve'", [ADcontent, key, userID], function() {
           if(checkQueueReport.stance === "deny"){
-            cantRepro = reportInfo.canRepro + 1;
-            canRepro = reportInfo.cantRepro - 1;
+            cantRepro = reportInfo.cantRepro - 1;
+            canRepro = reportInfo.canRepro + 1;
           } else {
             cantRepro = reportInfo.cantRepro;
             canRepro = reportInfo.canRepro;

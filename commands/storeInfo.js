@@ -35,10 +35,11 @@ let storeSysInfo = {
         }
 
         bot.getDMChannel(userID).then((DMInfo) => {
-          bot.createMessage(DMInfo.id, "Hey there <@" + userID + ">! Here's the stored info we have on you right now:\n" + fullInfoArray.join('\n')).catch(() => {
+          bot.createMessage(DMInfo.id, "Hey there <@" + userID + ">! Here's the stored info we have on you right now:\n" + fullInfoArray.join('\n')).then(() => {
+            utils.botReply(bot, userID, channelID, "I just DM'ed you your info!", command, msg.id);
+          }).catch(() => {
             utils.botReply(bot, userID, channelID, "I was not able to DM you, do you have them turned on?", command, msg.id);
           });
-          utils.botReply(bot, userID, channelID, "I just DM'ed you your info!", command, msg.id);
         }).catch((err) => {
           console.log("send DM storeInfo\n" + err);
         });

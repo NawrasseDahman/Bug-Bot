@@ -4,7 +4,7 @@ const utils = require("../src/utils");
 const getBug = require('../src/getBug');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!getreports|!allrepros/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -24,6 +24,38 @@ let modCommands = {
             //restart the bot
           });
           break;
+        case "!getuser":
+          db.all("SELECT * FROM users WHERE userid = ?", [recievedMessage], function(error, data) {
+            //bot.getDMChannel(userID).then((dmChannel) => {
+            //  bot.createMessage(dmChannel.id, data);
+            //}).catch((error) => {console.log(error);})
+            console.log(data);
+          });
+          break;
+        case "!getrepro":
+          db.all("SELECT * FROM reportQueueInfo WHERE id = ?", [recievedMessage], function(error, data) {
+            console.log(data);
+          });
+          break;
+        case "!getnumber":
+          db.get("SELECT cantRepro, canRepro, id FROM reports WHERE id = ?", [recievedMessage], function(error, data) {
+            console.log(data);
+          });
+          break;
+        case "!stats":
+
+          break;
+        case "!getreports":
+          db.all("SELECT * FROM reports", function(err, data) {
+            console.log(data);
+          });
+        break;
+        case "!allrepros":
+          db.all("SELECT * FROM reportQueueInfo", function(err, data) {
+            console.log(data);
+          });
+        break;
+
       }
   },
   roles: [

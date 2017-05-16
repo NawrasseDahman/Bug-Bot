@@ -104,7 +104,7 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
 
     var cardUpdated = function(error, data){
       utils.botReply(bot, userID, channelID, ", `" + utils.toTitleCase(editSection) + "` has been updated to `" + newContent + "`", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, "✏ **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
     }
     var updateCard = {
       value: newContent
@@ -120,7 +120,7 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
 
     var cardUpdated = function(error, data){
       utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, "✏ **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` <" + data.shortUrl + ">");
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` <" + data.shortUrl + ">");
     }
 
     var updateCard = {

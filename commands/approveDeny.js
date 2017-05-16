@@ -29,11 +29,14 @@ let approveDeny = {
     messageSplit.shift();
     let recievedMessage = messageSplit.join(' ');
     let contentMessage = recievedMessage.match(/(\d*)\s*\|\s*([\s\S]*)/i);
+
     if(!contentMessage) {
-      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " | system info`. See <#240548137633185792> for full syntax", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#312262075361787905> for full syntax", command, msg.id, false);
       return;
     }
+
     let key = contentMessage[1];
+
     db.get("SELECT header, reportStatus, canRepro, cantRepro, reportMsgID, header, reportString, userID FROM reports WHERE id = ?", [key], function(error, reportInfo) {
       if(!reportInfo) { // check if report exists
         utils.botReply(bot, userID, channelID, "I can't find that report ID. Make sure you use a valid report ID.", command, msg.id, false);

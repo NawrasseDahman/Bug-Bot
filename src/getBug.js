@@ -27,11 +27,11 @@ function getBug (bot, channelID, userTag, userID, command, msg, trello, db) {
       let stance;
       let getRepro = reportRepro.map(function(everyRepro) {
         if(everyRepro.stance === "approve") {
-          stance = "✅";
+          stance = ":white_check_mark:";
         } else {
-          stance = "❌";
+          stance = ":x:";
         }
-        return stance + " | <@" + everyRepro.userID + "> => `" + everyRepro.info + "`";
+        return stance + " | " + everyRepro.userTag + "(" + everyRepro.userID + ") => `" + everyRepro.info + "`";
       });
 
       bot.getDMChannel(userID).then((getID) => {

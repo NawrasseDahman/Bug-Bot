@@ -3,7 +3,7 @@ const config = require("../config");
 const utils = require("./utils");
 const customConfig = require("../configEdit");
 
-function attachUtils (bot, channelID, userTag, userID, command, msg, trello, trelloURL, attachment, removeMsg, urlDataName) {
+function attachUtils (bot, channelID, userTag, userID, command, msg, trello, trelloURL, attachment, removeMsg, urlDataName, reportMsgID) {
   let attachmentAttached = function(error, dataAttach) {
     if(!!error) {
       utils.botReply(bot, userID, config.channels.modLogChannel, "Something went wrong by attaching, please notify the authorities <https://trello.com/c/" + trelloURL + ">", command, null, false);
@@ -17,7 +17,7 @@ function attachUtils (bot, channelID, userTag, userID, command, msg, trello, tre
 
         if(!!gotMsg) {
           let newMsg = gotMsg.content + "\n:paperclip: **" + userTag + "** | " + attachment;
-          bot.editMessage(config.channels.queueChannel, report.reportMsgID, newMsg);
+          bot.editMessage(config.channels.queueChannel, reportMsgID, newMsg);
           bot.editMessage(channelID, gotMsg.id, newMsg);
         }
         setTimeout(function() {

@@ -23,7 +23,7 @@ function deniedReport(bot, msg, db, key, reportInfo) {
           bot.createMessage(DMInfo.id, "Hi " + DMInfo.recipient.username + ", unfortunately the bug you reported earlier: `" + reportInfo.header + "` was denied because:\n- `" + DBReportInfoArray.join('`\n- `') +
           "`\n\nYou should try adding as much information as you can when you resubmit it. Here are some helpful tips:\n- Does your bug only happen on a specific version of the operating system?\n- Does your bug only happen on a specific device?\n- Try to be as specific as possible. Generalities like \"it glitches\" aren't helpful and lead to confusion.\n- Try to keep each repro step to a single action.\n\nThank you though for the report and we look forward to your next one! :thumbsup:\n\nBelow you'll find your original submit message:\n```\n!submit " +
           reportInfo.header + " | " + reportInfo.reportString + "```").catch(() => {
-            bot.createMessage(config.channels.modLogChannel, "⚠ Can not DM **" + userTag + "**. Report **#" + key + "** denied.");
+            bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + userTag + "**. Report **#" + key + "** denied.");
           });
         });
       }).catch((error) => {console.log("deniedReport | createMessage denied because:\n" + error)});
@@ -154,13 +154,13 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
             bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** denied: **#" + key + "** `" + reportInfo.header + "` because: `" + ADcontent + "`"); //log to bot-log
           });
         });
-      } else { //new reportQueueInfo entries. Add XP here
+      } else { //new reportQueueInfo entries.
         let cantRepro = reportInfo.cantRepro + 1;
         db.run("INSERT INTO reportQueueInfo (id, userID, userTag, info, stance) VALUES (?, ?, ?, ?, ?)", [key, userID, userTag, ADcontent, 'deny'], function() {
           db.run("UPDATE reports SET cantRepro = ? WHERE id = ?", [cantRepro, key], function() {
-            if(cantRepro >= customConfig.denyAttempts) { // deny report
+            if(cantRepro >= customConfig.denyAttempts || reportInfo.userID === userID) { // deny report
               deniedReport(bot, msg, db, key, reportInfo);
-            } else {
+            } else { //Add XP here
               if(!!editMsgCont) {
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:redTick:" + config.emotes.redTick + "> **" + userTag + "**: `" + ADcontent + "`" + splitMsg[1];

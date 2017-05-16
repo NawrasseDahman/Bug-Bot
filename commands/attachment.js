@@ -53,7 +53,7 @@ let attach = {
             utils.botReply(bot, userID, channelID, "this report has already been denied.", command, msg.id, false);
             return;
           } else if(report.reportStatus === "trello") {
-            attachUtils(bot, channelID, userTag, userID, command, msg, trello, report.trelloURL, attachment, removeMsg, report.header);
+            attachUtils(bot, channelID, userTag, userID, command, msg, trello, report.trelloURL, attachment, removeMsg, report.header, report.reportMsgID);
             utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
           } else {
             bot.getMessage(config.channels.queueChannel, report.reportMsgID).then((msgContent) => {

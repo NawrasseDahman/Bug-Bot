@@ -8,6 +8,8 @@ var db = new sqlite3.Database('./data/data.sqlite');
 const utils = require("./src/utils");
 const getBug = require('./src/getBug');
 const backup = require('./src/backup');
+const dateFormat = require('dateformat');
+const fs = require('fs');
 
 let Trello = require('node-trello');
 var trello = new Trello(customConfig.trelloKey, customConfig.trelloToken);
@@ -85,10 +87,19 @@ bot.on('messageCreate', (msg) => {
   let command = messageSplit.shift();
   let channelID = msg.channel.id;
   let userTag = msg.author.username + "#" + msg.author.discriminator;
-      userTag = userTag.replace(/(\*|\`|\~|\_)/gi, "/$&");
+      userTag = userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
   let userID = msg.author.id;
 
   if(!!msg.channel.guild) {
+
+    if(userID === "84815422746005504" && command.toLowerCase() === "!log") {
+      let now = new Date();
+      let thisCycle = dateFormat(now, "UTC:mm-dd-yyyy-HH-MM");
+      let bufferString = fs.readFileSync('./logs/bblog.log');
+      bot.getDMChannel(userID).then((thisDM) => {
+        bot.createMessage(thisDM.id, null, {file: bufferString, name: "log-" + thisCycle + ".log"}).catch((error) => {console.log(error);});
+      });
+    }
 
     let dev = msg.member.roles.indexOf(config.roles.devRole);
     let admin = msg.member.roles.indexOf(config.roles.adminRole);

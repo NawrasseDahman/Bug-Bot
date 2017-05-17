@@ -4,14 +4,14 @@ const utils = require("./utils");
 const addReproToTrello = require("./trelloRepro");
 //Check for "latest"
 
-function queueRepro(bot, trello, db, channelID, reportKey, key) {
+function queueRepro(bot, trello, db, channelID, reportKey, key, report) {
   let delayTime = 0;
   let emoji = "\n<:greenTick:" + config.emotes.greenTick + "> ";
   let reproduction = "Can reproduce.";
   db.each("SELECT userTag, info FROM reportQueueInfo WHERE stance = 'approve' AND id = ?", [key], function(error, data) {
     delayTime += 2000;
     setTimeout(function() {
-      reproSetup(bot, null, channelID, null, trello, db, data.info, reportKey, emoji, reproduction, data.userTag, null);
+      reproSetup(bot, null, channelID, null, trello, db, data.info, reportKey, emoji, reproduction, data.userTag, null, report);
     }, delayTime);
   });
 }
@@ -33,7 +33,7 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
 
   let matchTick = splitOne.match(newRegex);
 
-  if(!!userID && !!report &&!!matchTick && "\n" + matchTick[1] + " " !== emoji) {
+  if(!!userID && !!report && !!matchTick && "\n" + matchTick[1] + " " !== emoji) {
     if(reproduction === "Can reproduce.") {
       reproCount = report.canRepro + 1;
       let cantRepro = report.cantRepro - 1;
@@ -63,6 +63,7 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
       db.run("UPDATE reports SET cantRepro = ?, canRepro = ? WHERE trelloURL = ?", [reproCount, canRepro, reportKey]);
     }
   }
+
   let newRepro = emoji + "**" + userTag + "** | `" + reproCnt + "`";
   let replace = splitOne.replace(newRegex, newRepro);
   let editMsgCreate;
@@ -72,16 +73,22 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
   } else { // add new repro and add to Trello
     editMsgCreate = splitMsg[0] + "**Reproducibility:**" + newRepro + splitMsg[1];
   }
-  addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID, reproduction, emoji, reproCnt, editMsgCreate, msgID, reportMsgID, command, reproCount);
+  addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID, reproduction, emoji, reproCnt, editMsgCreate, msgID, reportMsgID, command, reproCount, report);
 }
 
 function reproSetup(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, report) {
   if(!!report) { //add repro to trello and add to can/tRepro in DB
     //check if user has already repro'd
-
     bot.getMessage(channelID, report.reportMsgID).then((msgContent) => {
-
-      addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, msgContent.content, report.reportMsgID, report);
+      if(!!msgContent) {
+        if(!!userID) {
+          addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, msgContent.content, report.reportMsgID, report);
+        } else {
+          addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, msgContent.content, report.reportMsgID, null);
+        }
+      } else {
+        addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID, reproduction, emoji, reproCnt, null, msgID, null, command, null);
+      }
 
     }).catch(error => {console.log("Repro Add msg In DB\n" + error);});
   } else {
@@ -116,7 +123,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           return;
         }
 
-        reproCnt = reproCnt.replace(/(\*|`|\~|\_)/gi, "\\$&");
+        reproCnt = reproCnt.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
 
         let whichClient = reproCnt.match(/(-l|-m|-w|-a|-i)/i);
         let system;

@@ -7,7 +7,6 @@ let qutils = require('../src/queueUtils');
 function addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello) {
   db.all("SELECT stance FROM reportQueueInfo WHERE id = ? AND userID = ? AND (stance = 'approve' OR stance = 'deny')", [key, userID] , function(error, checkQueueReport) {
     bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((msgContent) => {
-
       if(!!msgContent && !!checkQueueReport) {
         qutils.addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent, checkQueueReport[0], reportInfo, msgContent, trello);
       } else if(!!msgContent && !checkQueueReport) {

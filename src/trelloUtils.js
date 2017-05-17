@@ -6,64 +6,71 @@ const reproUtils = require('./reproUtils');
 const attachUtils = require('./attachUtils');
 
 function addReportTrello(bot, key, db, trello) { // add report to trello
-  db.get('SELECT header, reportString, userID, userTag, cardID, reportMsgID FROM reports WHERE id = ?', [key], function(error, report) {
+  db.serialize(function(){
+    db.get('SELECT header, reportString, userID, userTag, cardID, reportMsgID FROM reports WHERE id = ?', [key], function(error, report) {
 
-    let allSections = sections(report.reportString);
+      let allSections = sections(report.reportString);
 
-    let stepsToRepro = allSections["steps to reproduce"];
-    stepsToRepro = stepsToRepro.replace(/(-)\s/gi, '\n$&');
-    let expectedResult = allSections["expected result"];
-    let actualResult = allSections["actual result"];
-    let clientSetting = allSections["client setting"];
-    let sysSettings = allSections["system setting"];
+      let stepsToRepro = allSections["steps to reproduce"];
+      stepsToRepro = stepsToRepro.replace(/(-)\s/gi, '\n$&');
+      let expectedResult = allSections["expected result"];
+      let actualResult = allSections["actual result"];
+      let clientSetting = allSections["client setting"];
+      let sysSettings = allSections["system setting"];
 
-    const reportString = '\n\n####Steps to reproduce:' + stepsToRepro + '\n\n####Expected result:\n' + expectedResult + '\n####Actual result:\n' + actualResult + '\n####Client settings:\n' + clientSetting + '\n####System settings:\n' + sysSettings;
-    const reportChatString = "\n**Short description:** " + report.header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
+      const reportString = '\n\n####Steps to reproduce:' + stepsToRepro + '\n\n####Expected result:\n' + expectedResult + '\n####Actual result:\n' + actualResult + '\n####Client settings:\n' + clientSetting + '\n####System settings:\n' + sysSettings;
+      const reportChatString = "\n**Short description:** " + report.header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
 
-    let success = function(successError, data) {
-      bot.deleteMessage(config.channels.queueChannel, report.reportMsgID).catch(() => {});
-      let postChannelID;
-      switch (report.cardID) {
-        case config.cards.iosCard:
-          postChannelID = config.channels.iosChannel;
-          break;
-        case config.cards.androidCard:
-          postChannelID = config.channels.androidChannel;
-          break;
-        case config.cards.canaryCard:
-          postChannelID = config.channels.canaryChannel;
-          break;
-        case config.cards.linuxCard:
-          postChannelID = config.channels.linuxChannel;
-          break;
+      let success = function(successError, data) {
+        bot.deleteMessage(config.channels.queueChannel, report.reportMsgID).catch(() => {});
+        let postChannelID;
+        switch (report.cardID) {
+          case config.cards.iosCard:
+            postChannelID = config.channels.iosChannel;
+            break;
+          case config.cards.androidCard:
+            postChannelID = config.channels.androidChannel;
+            break;
+          case config.cards.canaryCard:
+            postChannelID = config.channels.canaryChannel;
+            break;
+          case config.cards.linuxCard:
+            postChannelID = config.channels.linuxChannel;
+            break;
+        }
+        bot.createMessage(postChannelID, "───────────────────────\nReported By **" + report.userTag + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
+          // change reportStatus, trelloURL & queueMsgID
+          // attach all attachments to the trello post
+          let trelloURL = data.shortUrl.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?/i);
+          let trelloUrlSuffix = trelloURL[1];
+          db.run("UPDATE reports SET reportStatus = 'trello', trelloURL = ?, reportMsgID = ? WHERE id = ?", [trelloUrlSuffix, msgInfo.id, key]);
+          bot.createMessage(config.channels.modLogChannel, ":incoming_envelope: <#" + postChannelID + "> **" + report.userTag + "** - `" + report.header + "` <" + data.shortUrl + ">\n" + key); //log to bot-log
+
+          setTimeout(function() {
+            db.each('SELECT userID, userTag, attachment FROM reportAttachments WHERE id = ?', [key], function(error, attachmentData) {
+              if(!!attachmentData && attachmentData.length !== 0){
+                attachUtils(bot, null, attachmentData.userTag, attachmentData.userID, "!attach", null, trello, trelloURL[1], attachmentData.attachment, false, report.header);
+              }
+            });
+            getUserInfo(report.userID, report.userTag, postChannelID, data.shortUrl, key, bot);
+            db.get("SELECT cantRepro, canRepro, id, reportMsgID, trelloURL FROM reports WHERE id = ?", [key], function(err, newReport) {
+              if(!err) {
+                console.log(err);
+              }
+              reproUtils.queueRepro(bot, trello, db, postChannelID, trelloURL[1], key, newReport);
+            });
+          }, 2000);
+        }).catch(err => {console.log(err);});
       }
-      bot.createMessage(postChannelID, "───────────────────────\nReported By **" + report.userTag + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
-        // change reportStatus, trelloURL & queueMsgID
-        // attach all attachments to the trello post
-        let trelloURL = data.shortUrl.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?/i);
-        let trelloUrlSuffix = trelloURL[1];
-        db.run("UPDATE reports SET reportStatus = 'trello', trelloURL = ?, reportMsgID = ? WHERE id = ?", [trelloUrlSuffix, msgInfo.id, key]);
-        bot.createMessage(config.channels.modLogChannel, ":incoming_envelope: <#" + postChannelID + "> **" + report.userTag + "** - `" + report.header + "` <" + data.shortUrl + ">\n" + key); //log to bot-log
 
-        setTimeout(function() {
-          db.each('SELECT userID, userTag, attachment FROM reportAttachments WHERE id = ?', [key], function(error, attachmentData) {
-            if(!!attachmentData && attachmentData.length !== 0){
-              attachUtils(bot, null, attachmentData.userTag, attachmentData.userID, "!attach", null, trello, trelloURL[1], attachmentData.attachment, false, report.header);
-            }
-          });
-          getUserInfo(report.userID, report.userTag, postChannelID, data.shortUrl, key, bot);
-          reproUtils.queueRepro(bot, trello, db, postChannelID, trelloURL[1], key);
-        }, 2000);
-      }).catch(err => {console.log(err);});
-    }
-
-    let newReport = {
-      name: report.header,
-      desc: "Reported by " + report.userTag + reportString + "\n\n" + key,
-      idList: report.cardID,
-      pos: 'top'
-    }
-    trello.post('/1/cards/', newReport, success);
+      let newReport = {
+        name: report.header,
+        desc: "Reported by " + report.userTag + reportString + "\n\n" + key,
+        idList: report.cardID,
+        pos: 'top'
+      }
+      trello.post('/1/cards/', newReport, success);
+    });
   });
 }
 

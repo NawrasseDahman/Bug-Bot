@@ -47,8 +47,8 @@ let edit = {
       }
 
       let cleanNewContent;
-      if(!!newContent.match(/(\*|\`|\~)/i)){
-        cleanNewContent = newContent.replace(/(\*|\`|\~|\_)/gi, "/$&");
+      if(!!newContent.match(/(\*|\`|\~|\_|ˋ)/i)){
+        cleanNewContent = newContent.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
       } else {
         cleanNewContent = newContent;
       }

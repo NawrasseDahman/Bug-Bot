@@ -73,7 +73,7 @@ let storeSysInfo = {
       if(!!error){
         console.log(error);
       }
-      systemInfo = systemInfo.replace(/(\*|`|\~|\_)/gi, "");
+      systemInfo = systemInfo.replace(/(\*|\`|\~|\_|ˋ)/gi, "");
       if(!!dbRowReply){
         //Edit existing database entry
         db.run("UPDATE users SET " + whichOS + " = ? WHERE userid = ?", [systemInfo, userID]);

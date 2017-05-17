@@ -6,7 +6,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 let adminCommands = {
-  pattern: /!dapprove|!ddeny|!backup/i,
+  pattern: /!dapprove|!ddeny/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -54,16 +54,7 @@ let adminCommands = {
           adminUtils.queueOverride (bot, channelID, userTag, userID, command, msg, trello, db, key, ADContent);
         }
 
-        break;
-      case "!backup":
-
-        let now = new Date();
-        let thisCycle = dateFormat(now, "UTC:mm-dd-yyyy-HH-MM");
-        let bufferString = fs.readFileSync('./data/data.sqlite');
-
-        bot.createMessage(config.channels.modLogChannel, null, {file: bufferString, name: "Backup-" + thisCycle + ".sqlite"});
-
-        break;
+        break;s
     }
   },
   roles: [

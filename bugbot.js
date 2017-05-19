@@ -14,7 +14,9 @@ const fs = require('fs');
 let Trello = require('node-trello');
 var trello = new Trello(customConfig.trelloKey, customConfig.trelloToken);
 
-let bot = new Eris(customConfig.botToken);
+let bot = new Eris(customConfig.botToken, {
+  getAllUsers: true
+});
 
 bot.on('error', err => {
   console.log("BOT ERROR:\n" + err.stack);

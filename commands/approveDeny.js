@@ -49,14 +49,15 @@ let approveDeny = {
         utils.botReply(bot, userID, channelID, "this report has already been moved", command, msg.id, false);
         return;
       }
-      contentMessage[2] = contentMessage[2].replace(/(\*|`|\~|\_)/gi, "\\$&");
-      let whichClient = contentMessage[2].match(/(-l|-m|-w|-a|-i)/i);
+      contentMessage[2] = contentMessage[2].replace(/(\*|`|\~|\_|\ˋ)/gi, "\\$&");
+      let whichClient = contentMessage[2].match(/(?:\s)(-l|-m|-w|-a|-i)/i);
       let ADcontent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
       if(!contentMessage[2]) {
         utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msg.id, false);
         return;
       } else if(!!whichClient) {
+        whichClient[1] = whichClient[1].toLowerCase();
         let system;
         if(whichClient[1] === "-w") {
           system = "windows";
@@ -71,12 +72,11 @@ let approveDeny = {
         }
         db.get("SELECT " + system + " FROM users WHERE userid = ?", [userID], function(error, usrSys) {
           if(!!usrSys){
-            //ADcontent = whichClient.replace(/(-l|-m|-w|-a|-i)/i, usrSys[system]);
             let info = contentMessage[2];
-            ADcontent = info.replace(/(-l|-m|-w|-a|-i)/i, usrSys[system]);
+            ADcontent = info.replace(/(?:\s)(-l|-m|-w|-a|-i)/i, " " + usrSys[system]);
             addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
           } else {
-            utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!addsys " + whichClient[1] + " | system info`", command, msg.id, false);
+            utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!storeinfo " + whichClient[1] + " | system info`", command, msg.id, false);
             return;
           }
         });

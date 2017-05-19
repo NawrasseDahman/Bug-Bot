@@ -137,7 +137,8 @@ let submitCommand = {
           if(!!sysSettingsFlag) {
             let whichOS;
             let systemInfo = sysSettingsFlag[1];
-
+                sysSettingsFlag[1] = sysSettingsFlag[1].toLowerCase();
+                
             if(sysSettingsFlag[1] === "-w") {
               whichOS = "windows";
             } else if(sysSettingsFlag[1] === "-i") {

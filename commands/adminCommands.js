@@ -20,13 +20,14 @@ let adminCommands = {
           return;
         }
         let key = contentMessage[1];
-        let whichClient = contentMessage[2].match(/(-l|-m|-w|-a|-i)/i);
+        let whichClient = contentMessage[2].match(/(?:\s)(-l|-m|-w|-a|-i)/i);
         let ADContent;
         //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
         if(!contentMessage[2]) {
           utils.botReply(bot, userID, channelID, "psst, you forgot your reason or system settings!", command, msg.id, false);
           return;
         } else if(!!whichClient) {
+          whichClient[1] = whichClient[1].toLowerCase();
           let system;
           if(whichClient[1] === "-w") {
             system = "windows";

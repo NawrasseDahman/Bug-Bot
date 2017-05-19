@@ -53,6 +53,7 @@ let storeSysInfo = {
     }
     let whichOS;
     let systemInfo = contentInfo[2];
+        contentInfo[1] = contentInfo[1].toLowerCase();
 
     if(contentInfo[1] === "-w") {
       whichOS = "windows";
@@ -74,16 +75,31 @@ let storeSysInfo = {
         console.log(error);
       }
       systemInfo = systemInfo.replace(/(\*|\`|\~|\_|ˋ)/gi, "");
+
+      switch(whichOS.toLowerCase()) {
+        case "windows":
+        case "linux":
+        case "android":
+          whichOS = utils.toTitleCase(whichOS);
+         break;
+        case "macos":
+          whichOS = "macOS";
+          break;
+        case "ios":
+          whichOS = "iOS";
+          break;
+      }
+
       if(!!dbRowReply){
         //Edit existing database entry
         db.run("UPDATE users SET " + whichOS + " = ? WHERE userid = ?", [systemInfo, userID]);
-        utils.botReply(bot, userID, channelID, "your new " + utils.toTitleCase(whichOS) + " settings have been saved", command, msg.id);
-        bot.createMessage(config.channels.modLogChannel, ":floppy_disk: **" + userTag + "** changed **" + utils.toTitleCase(whichOS) + "** -> `" + systemInfo + "`"); //user changed their --- info
+        utils.botReply(bot, userID, channelID, "your new " + whichOS + " settings have been saved", command, msg.id);
+        bot.createMessage(config.channels.modLogChannel, ":floppy_disk: **" + userTag + "** changed **" + whichOS + "** -> `" + systemInfo + "`"); //user changed their --- info
       }else if(!dbRowReply){
         //Create new database entry
         db.run("INSERT INTO users (userid, " + whichOS + ") VALUES(?, ?)", [userID, systemInfo]);
-        utils.botReply(bot, userID, channelID, "your new " + utils.toTitleCase(whichOS) + " settings have been saved", command, msg.id);
-        bot.createMessage(config.channels.modLogChannel, ":floppy_disk: **" + userTag + "** added **" + utils.toTitleCase(whichOS) + "** -> `" + systemInfo + "`"); //user added their --- info
+        utils.botReply(bot, userID, channelID, "your new " + whichOS + " settings have been saved", command, msg.id);
+        bot.createMessage(config.channels.modLogChannel, ":floppy_disk: **" + userTag + "** added **" + whichOS + "** -> `" + systemInfo + "`"); //user added their --- info
       }
     });
   },

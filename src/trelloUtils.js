@@ -82,8 +82,8 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
     if(!userInfo) {
       return;
     }
-    if(userInfo.roles.indexOf(config.roles.hunterRole) === -1){
-      //bot.createMessage(config.channels.modLogChannel, "<@110813477156720640> " + userTag + " needs a rank");  // Ping dabbit for rank
+    if(userInfo.roles.indexOf(config.roles.hunterRole) === -1 && config.DTserverID === "197038439483310086"){
+      bot.createMessage(config.channels.modLogChannel, "<@110813477156720640> " + userTag + " needs a rank");  // Ping dabbit for rank
     }
     bot.getDMChannel(userID).then((DMInfo) => {
       bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {

@@ -123,7 +123,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           return;
         }
 
-        reproCnt = reproCnt.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
+        reproCnt = reproCnt.replace(/(\*|\`|\~|\_|\ˋ)/gi, "\\$&");
 
         let whichClient = reproCnt.match(/(-l|-m|-w|-a|-i)/i);
         let system;
@@ -132,6 +132,8 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msgID, false);
           return;
         } else if(!!whichClient) {
+          whichClient[1] = whichClient[1].toLowerCase();
+
           if(whichClient[1] === "-w") {
             system = "windows";
           } else if(whichClient[1] === "-i") {

@@ -4,7 +4,7 @@ const utils = require("../src/utils");
 const getBug = require('../src/getBug');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!getreports|!allrepros|!backup/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -51,18 +51,6 @@ let modCommands = {
 
         case "!stats":
 
-          break;
-
-        case "!getreports":
-          db.all("SELECT * FROM reports", function(err, data) {
-            console.log(data);
-          });
-          break;
-
-        case "!allrepros":
-          db.all("SELECT * FROM reportQueueInfo", function(err, data) {
-            console.log(data);
-          });
           break;
 
         case "!backup":

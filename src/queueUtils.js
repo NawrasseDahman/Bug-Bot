@@ -1,8 +1,4 @@
 "use strict";
-
-//QueueRepro & addAD done
-// Add mod logs texts
-
 const config = require("../config");
 const customConfig = require('../configEdit');
 const utils = require("./utils");

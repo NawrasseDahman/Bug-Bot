@@ -1,6 +1,6 @@
 "use strict";
 const config = require("../config");
-let utils = require("./utils");
+const utils = require("./utils");
 
 let unknownCommand = {
   pattern: /!.*/,

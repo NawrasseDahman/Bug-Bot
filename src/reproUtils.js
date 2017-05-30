@@ -2,7 +2,6 @@
 const config = require("../config");
 const utils = require("./utils");
 const addReproToTrello = require("./trelloRepro");
-//Check for "latest"
 
 function queueRepro(bot, trello, db, channelID, reportKey, key, report) {
   let delayTime = 0;
@@ -50,17 +49,6 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
     } else {
       reproCount = report.cantRepro + 1;
       db.run("UPDATE reports SET cantRepro = ? WHERE trelloURL = ?", [reproCount, reportKey]);
-    }
-  }
-  if (!!userID && !!report && !!matchTick && "\n" + matchTick[1] + " " !== emoji) {
-    if(reproduction === "Can reproduce.") {
-      reproCount = report.canRepro + 1;
-      let cantRepro = report.cantRepro - 1;
-      db.run("UPDATE reports SET canRepro = ?, cantRepro = ? WHERE trelloURL = ?", [reproCount, cantRepro, reportKey]);
-    } else {
-      reproCount = report.cantRepro + 1;
-      let canRepro = report.canRepro - 1;
-      db.run("UPDATE reports SET cantRepro = ?, canRepro = ? WHERE trelloURL = ?", [reproCount, canRepro, reportKey]);
     }
   }
 
@@ -125,7 +113,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
 
         reproCnt = reproCnt.replace(/(\*|\`|\~|\_|\ˋ)/gi, "\\$&");
 
-        let whichClient = reproCnt.match(/(-l|-m|-w|-a|-i)/i);
+        let whichClient = reproCnt.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
         let system;
 
         if(!reproCnt){
@@ -147,7 +135,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           }
           db.get("SELECT " + system + " FROM users WHERE userID = ?", [userID], function(error, usrSys) {
             if(!!usrSys){
-              reproCnt = reproCnt.replace(/(-l|-m|-w|-a|-i)/i, usrSys[system]);
+              reproCnt = reproCnt.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, usrSys[system]);
               reproSetup(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey, emoji, reproduction, userTag, command, report);
             } else {
               utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our system. You can add it with `!storeinfo " + whichClient[1] + " | new System`", command, msgID, false);

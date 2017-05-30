@@ -7,14 +7,14 @@ function addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note,
   let addedNote = function(error, info) {
     if(!!error) {
       bot.createMessage(channelID, "Something went wrong, please try again").then(utils.delay(customConfig.delayInS)).then((msgInfo) => {
-        bot.deleteMessage(channelID, msgInfo.id);
+        bot.deleteMessage(channelID, msgInfo.id).catch(() => {});
       }).catch((err) => {
         console.log("--> addNote | sendNote error\n" + err);
-        console.log(error);
+        console.log("addedNote" + error);
       });
     }else{
       utils.botReply(bot, userID, channelID, "you've successfully added your note.", command, msg.id);
-      bot.createMessage(config.channels.modLogChannel, "**" + userTag + "**: Added a note to `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">");
+      bot.createMessage(config.channels.modLogChannel, "**" + userTag + "**: Added a note to `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">").catch((err) => {console.log("modLog addNote success\n" + err);});
     }
   }
 
@@ -44,20 +44,28 @@ let addNote = {
     note = note.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
 
     db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key, function(error, reportInfo) {
+      if(!!error) {
+        console.log("dbGetErr\n" + error);
+      }
+
       let trelloURL;
       if(!!reportInfo) {
         trelloURL = reportInfo.trelloURL;
       } else {
         trelloURL = key;
       }
+
       trello.get("/1/cards/" + trelloURL, { }, function(errorURL, urlData) {
+        if(!!errorURL) {
+          console.log("getTrelloCard\n" + errorURL);
+        }
         if(!!reportInfo && !!urlData && !!urlData.id && reportInfo.reportStatus === "trello") { // In trello and in Database
           bot.getMessage(channelID, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
               let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
-              bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate);
+              bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate).catch((err) => {console.log("editMsg Chat Trello\n" + err);});
             }
           }).catch((error) => {console.log("AddNote Trello MsgEdit\n" + error);}); //Trello
 
@@ -69,7 +77,7 @@ let addNote = {
               let splitMsg = reportMsg.content.split("Report ID: **" + key + "**");
               let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
-              bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate);
+              bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, editMsgCreate).catch((err) => {console.log("editMsg Chat queue\n" + err);});
             }
           }).catch((error) => {console.log("AddNote Queue MsgEdit\n" + error);}); //Queue
 
@@ -84,7 +92,7 @@ let addNote = {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
               let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
 
-              bot.editMessage(channelID, reportMsg.id, editMsgCreate);
+              bot.editMessage(channelID, reportMsg.id, editMsgCreate).catch((err) => {console.log("editMsg legacy Chat\n" + err);});
             }
           }).catch((error) => {console.log("AddNote Legacy MsgEdit\n" + error);});
 

@@ -14,7 +14,7 @@ let attach = {
 
     let regexMsg = joinedMsg.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|?\s*([\s\S]*)/i);
     if(!regexMsg || !regexMsg[1]) {
-      utils.botReply(bot, userID, channelID, "please include a report key or trello url, and a image", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please include a report key or trello url, and a attachment", command, msg.id, false);
       return;
     }
 
@@ -24,9 +24,11 @@ let attach = {
 
     if(!!regexMsg[2]) {
       attachment = regexMsg[2];
-      let checkLink = attachment.match(/\bhttps?:\/\/\S+(?:png|jpg|jpeg|gif)\b/i);
-      if(!checkLink) {
-        utils.botReply(bot, userID, channelID, "please include a valid image", command, msg.id, false);
+
+      let checkForYT = attachment.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/i);
+      let checkForImage = attachment.match(/\bhttps?:\/\/\S+(?:png|jpg|jpeg|gif)\b/i);
+      if(!checkForImage && !checkForYT) {
+        utils.botReply(bot, userID, channelID, "please include a valid attachment", command, msg.id, false);
         return;
       }
       removeMsg = true;
@@ -34,7 +36,7 @@ let attach = {
       attachment = msg.attachments[0].url;
       removeMsg = false;
     } else {
-      utils.botReply(bot, userID, channelID, "please include a image", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please include a attachment", command, msg.id, false);
       return;
     }
 
@@ -59,7 +61,7 @@ let attach = {
             bot.getMessage(config.channels.queueChannel, report.reportMsgID).then((msgContent) => {
               let newMsg = msgContent.content + "\n:paperclip: **" + userTag + "**: " + attachment;
               db.run("INSERT INTO reportAttachments (id, userID, userTag, attachment) VALUES (?, ?, ?, ?)", [key, userID, userTag, attachment], function() {
-                bot.editMessage(config.channels.queueChannel, report.reportMsgID, newMsg);
+                bot.editMessage(config.channels.queueChannel, report.reportMsgID, newMsg).catch((err) => {console.log("editInAttachment\n" + err);});
                 utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
                 bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + userTag + "**: `" + report.header + "` **#" + key + "**");
               });
@@ -70,7 +72,7 @@ let attach = {
 
       if(removeMsg === true) {
         setTimeout(function() {
-          bot.deleteMessage(channelID, msg.id);
+          bot.deleteMessage(channelID, msg.id).catch(() => {});
         }, customConfig.delayInS * 1000);
       }
     });

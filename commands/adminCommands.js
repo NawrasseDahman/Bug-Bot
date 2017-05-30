@@ -2,8 +2,6 @@
 const config = require("../config");
 const utils = require("../src/utils");
 const adminUtils = require('../src/adminUtils');
-const fs = require('fs');
-const dateFormat = require('dateformat');
 
 let adminCommands = {
   pattern: /!dapprove|!ddeny/i,
@@ -63,7 +61,7 @@ let adminCommands = {
     config.roles.devRole
     ],
   channels: [
-    config.channels.allChannels
+    config.channels.queueChannel
   ]
 }
 module.exports = adminCommands;

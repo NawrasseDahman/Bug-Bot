@@ -19,6 +19,8 @@ let bot = new Eris(customConfig.botToken, {
 });
 
 bot.on('error', err => {
+  let newDate = new Date();
+  let currentTime = dateFormat(newDate, "UTC:mm-dd-yyyy-HH-MM");
   console.log("BOT ERROR:\n" + err.stack);
 });
 let reconnect = false;
@@ -32,9 +34,7 @@ bot.on("ready", () => {
 
   if(reconnect === false) {
     //run loops
-
     backup(bot);
-
     reconnect = true;
   }
 });

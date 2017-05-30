@@ -1,8 +1,8 @@
 "use strict";
 const config = require('../config');
-let trelloUtils = require('../src/trelloUtils');
-let utils = require('../src/utils');
-let qUtils = require('../src/queueUtils');
+const trelloUtils = require('../src/trelloUtils');
+const utils = require('../src/utils');
+const qUtils = require('../src/queueUtils');
 
 let edit = {
   pattern: /!edit/i,
@@ -23,11 +23,11 @@ let edit = {
     let editSection = matchString[2];
     let newContent = matchString[3];
     //only reporter and mods+ can edit
-    db.get("SELECT userID, reportString, reportMsgID, reportStatus, trelloURL FROM reports WHERE trelloURL = ? OR id = ?", [key, key], function(error, report) {
+    db.get("SELECT userid, reportString, reportMsgID, reportStatus, trelloURL FROM reports WHERE trelloURL = ? OR id = ?", [key, key], function(error, report) {
 
       let getPerms = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
 
-      if(getPerms === -1 && report.userID !== userID) {
+      if(getPerms === -1 && !!report && report.userid !== userID) {
         utils.botReply(bot, userID, channelID, "only the reporter, or mods+ can modify reports", command, msg.id, false);
         return;
       }
@@ -87,6 +87,11 @@ let edit = {
       }
 
       trello.get("/1/cards/" + key, {}, function(errorTrello, urlData) {
+        if(!!errorTrello) {
+          console.log("edit getTrello\n" + errorTrello);
+          return;
+        }
+        
         if(!report && !urlData && !urlData.id) { //Check if the key is correct
           utils.botReply(bot, userID, channelID, "I can't seem to find the report on Trello or in the Queue, you should double check your key.", command, msg.id, false);
           return;
@@ -121,7 +126,7 @@ let edit = {
                 let newRegex = new RegExp(pattern, "i");
 
                 let editReport = oldReport.content.replace(newRegex, utils.toTitleCase(editSection) + ":** " + cleanNewContent);
-                bot.editMessage(channelID, report.reportMsgID, editReport);
+                bot.editMessage(channelID, report.reportMsgID, editReport).catch((err) => {console.log("Edit | trello Msg\n" + err);});
               }
             }).catch((error) => {console.log("Edit | Trello & DB getMsg\n" + error);});
           } else if(report.reportStatus === "closed") { //report has been denied
@@ -138,7 +143,7 @@ let edit = {
               let newRegex = new RegExp(pattern, "i");
 
               let editReport = dataFinder.content.replace(newRegex, utils.toTitleCase(editSection) + ":** " + cleanNewContent);
-              bot.editMessage(channelID, dataFinder.id, editReport);
+              bot.editMessage(channelID, dataFinder.id, editReport).catch((err) => {console.log("Edit | Legacy Msg\n" + err);});
             }
           }).catch((error) => {console.log("Edit | Legacy getMsg\n" + error);});
         }

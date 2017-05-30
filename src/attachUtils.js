@@ -17,8 +17,8 @@ function attachUtils (bot, channelID, userTag, userID, command, msg, trello, tre
 
         if(!!gotMsg) {
           let newMsg = gotMsg.content + "\n:paperclip: **" + userTag + "** | " + attachment;
-          bot.editMessage(config.channels.queueChannel, reportMsgID, newMsg);
-          bot.editMessage(channelID, gotMsg.id, newMsg);
+          bot.editMessage(config.channels.queueChannel, reportMsgID, newMsg).catch((err) => {console.log("attachUtils | editQueueMsg\n" + err);});
+          bot.editMessage(channelID, gotMsg.id, newMsg).catch((err) => {console.log("attachUtils | editMsg\n" + err);});
         }
         setTimeout(function() {
           bot.deleteMessage(channelID, msg.id).catch(() => {});

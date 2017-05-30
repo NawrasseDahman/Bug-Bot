@@ -1,8 +1,8 @@
 "use strict";
 const config = require("../config");
-let queueUtils = require("../src/queueUtils");
-let sections = require("../src/getSections");
-let utils = require("../src/utils");
+const queueUtils = require("../src/queueUtils");
+const sections = require("../src/getSections");
+const utils = require("../src/utils");
 
 function checkSectionsExist(userID, report, channelID, sectionNames, db) {
   let promise = new Promise((resolve, reject) => {
@@ -132,13 +132,13 @@ let submitCommand = {
             return;
           }
 
-          let sysSettingsFlag = sysSettings.match(/(-l|-m|-w|-a|-i)/i);
+          let sysSettingsFlag = sysSettings.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
 
           if(!!sysSettingsFlag) {
             let whichOS;
             let systemInfo = sysSettingsFlag[1];
                 sysSettingsFlag[1] = sysSettingsFlag[1].toLowerCase();
-                
+
             if(sysSettingsFlag[1] === "-w") {
               whichOS = "windows";
             } else if(sysSettingsFlag[1] === "-i") {

@@ -83,7 +83,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
       return;
     }
     if(userInfo.roles.indexOf(config.roles.hunterRole) === -1 && config.DTserverID === "197038439483310086"){
-      bot.createMessage(config.channels.modLogChannel, "<@110813477156720640> " + userTag + " needs a rank");  // Ping dabbit for rank
+      bot.createMessage(config.channels.modLogChannel, "<@110813477156720640> <@" + userID + "> needs a rank");  // Ping dabbit for rank
     }
     bot.getDMChannel(userID).then((DMInfo) => {
       bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {
@@ -105,8 +105,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
 }
 
 function editTrelloReport(bot, trello, userTag, userID, key, editSection, newContent, msg, channelID, urlData, msgID, command) {
-  let checkArray = ["header", "short description", "title"];
-  if(checkArray.indexOf(editSection.toLowerCase()) > 1) {
+  if(editSection === 'short description') {
     //edit card title (name)
 
     var cardUpdated = function(error, data){

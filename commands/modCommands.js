@@ -2,6 +2,8 @@
 const config = require("../config");
 const utils = require("../src/utils");
 const getBug = require('../src/getBug');
+const fs = require('fs');
+const dateFormat = require('dateformat');
 
 let modCommands = {
   pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup/i,
@@ -23,6 +25,7 @@ let modCommands = {
         case "!restart":
           bot.createMessage(config.channels.modLogChannel, ":large_blue_diamond: Restart command used");
           bot.deleteMessage(channelID, msg.id).then(() => {
+            console.log("Restarting");
             process.exit();
             //restart the bot
           });

@@ -1,8 +1,8 @@
 "use strict";
 const config = require("../config");
 const customConfig = require('../configEdit');
-let utils = require("../src/utils");
-let qutils = require('../src/queueUtils');
+const utils = require("../src/utils");
+const qutils = require('../src/queueUtils');
 
 function addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello) {
   db.all("SELECT stance FROM reportQueueInfo WHERE id = ? AND userID = ? AND (stance = 'approve' OR stance = 'deny')", [key, userID] , function(error, checkQueueReport) {
@@ -37,6 +37,10 @@ let approveDeny = {
     let key = contentMessage[1];
 
     db.get("SELECT header, reportStatus, canRepro, cantRepro, reportMsgID, header, reportString, userID FROM reports WHERE id = ?", [key], function(error, reportInfo) {
+      if(!!error) {
+        console.log("appDeny\n" + error);
+      }
+
       if(!reportInfo) { // check if report exists
         utils.botReply(bot, userID, channelID, "I can't find that report ID. Make sure you use a valid report ID.", command, msg.id, false);
         return;
@@ -50,7 +54,7 @@ let approveDeny = {
         return;
       }
       contentMessage[2] = contentMessage[2].replace(/(\*|`|\~|\_|\ˋ)/gi, "\\$&");
-      let whichClient = contentMessage[2].match(/(?:\s)(-l|-m|-w|-a|-i)/i);
+      let whichClient = contentMessage[2].match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
       let ADcontent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
       if(!contentMessage[2]) {
@@ -71,9 +75,12 @@ let approveDeny = {
           system = "android";
         }
         db.get("SELECT " + system + " FROM users WHERE userid = ?", [userID], function(error, usrSys) {
+          if(!!error) {
+            console.log("getSystem\n" + error);
+          }
           if(!!usrSys){
             let info = contentMessage[2];
-            ADcontent = info.replace(/(?:\s)(-l|-m|-w|-a|-i)/i, " " + usrSys[system]);
+            ADcontent = info.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, " " + usrSys[system]);
             addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
           } else {
             utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!storeinfo " + whichClient[1] + " | system info`", command, msg.id, false);

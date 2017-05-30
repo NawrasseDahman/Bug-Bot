@@ -57,7 +57,7 @@ function queueReport (bot, userTag, userID, channelID, db, msg, reportCapLinks, 
         db.run("INSERT INTO reports(id, header, reportString, userID, userTag, cardID, reportStatus, canRepro, cantRepro, reportMsgID, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime())", [reportID, header, reportCapLinks, userID, userTag, cardID, 'queue', 0, 0, queueMsgID], function(err) {if(!!err){console.log(err);}}); //message ID of report in Queue, later changed to ID in main chat. And time the report was reported (for statistical purposes)
         utils.botReply(bot, userID, channelID, "your bug has been added to the approval queue. You will be notified when the status of your report updates.", null, msg.id, false);
         bot.createMessage(config.channels.modLogChannel, ":pencil: **" + userTag + "** submitted `" + header + "` in <#" + channelID + ">"); //log to bot-log
-      });
+      }).catch((err) => {console.log("queueUtils | createQueue Msg\n" + err);});
     });
   });
 }
@@ -68,7 +68,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
       if(!!checkQueueReport) { //Update reportQueueInfo (User has already given their input and wants to change it)
         let cantRepro;
         let canRepro;
-        db.run("UPDATE reportQueueInfo SET info = ?, stance = 'approve' WHERE id = ? AND userID = ? AND stance = 'deny' OR stance = 'approve'", [ADcontent, key, userID], function() {
+        db.run("UPDATE reportQueueInfo SET info = ?, stance = 'approve' WHERE id = ? AND userID = ? AND stance != 'note'", [ADcontent, key, userID], function() {
           if(checkQueueReport.stance === "deny"){
             cantRepro = reportInfo.cantRepro - 1;
             canRepro = reportInfo.canRepro + 1;
@@ -90,11 +90,11 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let newRepro = "<:greenTick:" + config.emotes.greenTick + "> **" + userTag + "**: `" + ADcontent + "`";
                 let replace = split.replace(newRegex, newRepro);
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**" +  replace;
-                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve update\n" + err);});
+                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve update\n" + err);}).catch((err) => {console.log("queueUtils | editApprove Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully changed your stance on report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + userTag + "** approved: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + userTag + "** updated their approval: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       } else { //new reportQueueInfo entries. Add XP here
@@ -107,7 +107,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
               if(!!editMsgCont) {
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:greenTick:" + config.emotes.greenTick + "> **" + userTag + "**: `" + ADcontent + "`" + splitMsg[1];
-                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve new\n" + err);});
+                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve new\n" + err);}).catch((err) => {console.log("queueUtils | addNewApproval Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully approved report **#" + key + "**", command, msg.id);
@@ -120,7 +120,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
       if(!!checkQueueReport) { //Update reportQueueInfo (User has already given their input and wants to change it)
         let cantRepro;
         let canRepro;
-        db.run("UPDATE reportQueueInfo SET info = ?, stance = 'deny' WHERE id = ? AND userID = ? AND stance = 'deny' OR stance = 'approve'", [ADcontent, key, userID], function() {
+        db.run("UPDATE reportQueueInfo SET info = ?, stance = 'deny' WHERE id = ? AND userID = ? AND stance != 'note'", [ADcontent, key, userID], function() {
           if(checkQueueReport.stance === "approve"){
             cantRepro = reportInfo.cantRepro + 1;
             canRepro = reportInfo.canRepro - 1;
@@ -143,11 +143,11 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let replace = split.replace(newRegex, newRepro);
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**" + replace;
 
-                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit Deny update\n" + err);});
+                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit Deny update\n" + err);}).catch((err) => {console.log("queueUtils | editDenial Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully changed your stance on report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** denied: **#" + key + "** `" + reportInfo.header + "` because: `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** updated their denial: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       } else { //new reportQueueInfo entries.
@@ -160,11 +160,11 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
               if(!!editMsgCont) {
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:redTick:" + config.emotes.redTick + "> **" + userTag + "**: `" + ADcontent + "`" + splitMsg[1];
-                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit Deny new\n" + err);});
+                bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit Deny new\n" + err);}).catch((err) => {console.log("queueUtils | newDenial Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully denied report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** denied: **#" + key + "** `" + reportInfo.header + "` because: `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** denied: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       }

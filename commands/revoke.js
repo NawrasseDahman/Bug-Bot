@@ -1,6 +1,6 @@
 "use strict";
 const config = require("../config");
-let utils = require('../src/utils');
+const utils = require('../src/utils');
 
 let revoke = {
   pattern: /!revoke/i,
@@ -38,7 +38,7 @@ let revoke = {
         let matchTick = split.match(newRegex);
         if(!matchTick) {
           //reply user has not approved or denied this report
-          utils.botReply(bot, userID, channelID, "you havn't given your input on this report yet", command, msg.id);
+          utils.botReply(bot, userID, channelID, "you haven't given your input on this report yet", command, msg.id);
           return;
         }
 
@@ -61,6 +61,7 @@ let revoke = {
           }
           bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).then(() => {
             utils.botReply(bot, userID, channelID, "you have successfully removed your input on **#" + key + "**", command, msg.id);
+            bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + userTag + "** removed their input on **#" + key + "**");
           }).catch(err => {console.log("edit out - revoke\n" + err);});
         });
 

@@ -44,7 +44,7 @@ function getBug (bot, channelID, userTag, userID, command, msg, trello, db) {
           trelloURL = "<https://trello.com/c/" + reportInfo.trelloURL + ">";
         }
         let queueReportString = "\n**Short description:** " + reportInfo.header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
-        bot.createMessage(getID.id, "───────────────────────\nReported by: " + reportInfo.userTag + "\n" + queueReportString + "\n\n - " + getRepro.join('\n - ') + "\n **#" + recievedMessage + "** - " + trelloURL);
+        bot.createMessage(getID.id, "───────────────────────\nReported by: " + reportInfo.userTag + "\n" + queueReportString + "\n\n - " + getRepro.join('\n - ') + "\n **#" + recievedMessage + "** - " + trelloURL).catch((err) => {console.log("getBug | createMsg\n" + err);});
         bot.deleteMessage(channelID, msg.id).catch(() => {});
       }).catch((error) => {console.log("getBug ERR:\n" + error);});
     });

@@ -56,9 +56,6 @@ let addNote = {
       }
 
       trello.get("/1/cards/" + trelloURL, { }, function(errorURL, urlData) {
-        if(!!errorURL) {
-          console.log("getTrelloCard\n" + errorURL);
-        }
         if(!!reportInfo && !!urlData && !!urlData.id && reportInfo.reportStatus === "trello") { // In trello and in Database
           bot.getMessage(channelID, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {

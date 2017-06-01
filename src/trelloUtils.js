@@ -54,7 +54,7 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
             });
             getUserInfo(report.userID, report.userTag, postChannelID, data.shortUrl, key, bot);
             db.get("SELECT cantRepro, canRepro, id, reportMsgID, trelloURL FROM reports WHERE id = ?", [key], function(err, newReport) {
-              if(!err) {
+              if(!!err) {
                 console.log(err);
               }
               reproUtils.queueRepro(bot, trello, db, postChannelID, trelloURL[1], key, newReport);
@@ -83,7 +83,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
       return;
     }
     if(userInfo.roles.indexOf(config.roles.hunterRole) === -1 && config.DTserverID === "197038439483310086"){
-      bot.createMessage(config.channels.modLogChannel, "<@110813477156720640> <@" + userID + "> needs a rank");  // Ping dabbit for rank
+      bot.createMessage(config.channels.modLogChannel, ":balloon: <@110813477156720640> <@" + userID + "> needs a rank");  // Ping dabbit for rank
     }
     bot.getDMChannel(userID).then((DMInfo) => {
       bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {

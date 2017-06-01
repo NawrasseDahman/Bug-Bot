@@ -1,7 +1,7 @@
 "use strict";
 const config = require("../config");
 const utils = require("../src/utils");
-const getBug = require('../src/getBug');
+const modUtils = require('../src/modUtils');
 const fs = require('fs');
 const dateFormat = require('dateformat');
 
@@ -18,15 +18,20 @@ let modCommands = {
         break;
 
         case "!bug":
-          getBug(bot, channelID, userTag, userID, command, msg, trello, db);
+          modUtils.getBug(bot, channelID, userTag, userID, command, msg, trello, db);
           //DM person everything about a report
           break;
 
         case "!restart":
-          bot.createMessage(config.channels.modLogChannel, ":large_blue_diamond: Restart command used");
+          let currentTime = new Date();
+          let thisBackupTime = dateFormat(currentTime, "UTC:mm-dd-yyyy-HH-MM");
+          let backupFile = fs.readFileSync('./data/data.sqlite');
+
           bot.deleteMessage(channelID, msg.id).then(() => {
             console.log("Restarting");
-            process.exit();
+            bot.createMessage(config.channels.modLogChannel, ":large_blue_diamond: Restart command used", {file: backupFile, name: "Backup-" + thisBackupTime + ".sqlite"}).then(() => {
+              process.exit();
+            });
             //restart the bot
           });
           break;
@@ -63,7 +68,6 @@ let modCommands = {
 
           bot.createMessage(config.channels.modLogChannel, null, {file: bufferString, name: "Backup-" + thisCycle + ".sqlite"});
           break;
-
       }
   },
   roles: [

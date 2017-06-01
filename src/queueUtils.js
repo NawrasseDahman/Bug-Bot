@@ -173,7 +173,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
 }
 
 function editDBReport(bot, trello, db, userTag, userID, key, editSection, newContent, msg, channelID, oldReportString) {
-  if(editSection === "header" || editSection === "short description") {
+  if(editSection === "short description") {
     db.run("UPDATE reports SET header = ? WHERE id = ?", [newContent, key]);
   } else {
     let requiredFields = ["steps to reproduce", "expected result", "actual result", "client setting", "system setting"];

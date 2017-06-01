@@ -51,4 +51,16 @@ function getBug (bot, channelID, userTag, userID, command, msg, trello, db) {
   });
 }
 
-if(module) { module.exports = getBug; }
+function getStats (bot, channelID, userTag, userID, command, msg, trello, db) {
+
+}
+
+function getUser (bot, channelID, userTag, userID, command, msg, trello, db) {
+  
+}
+
+module.exports = {
+  getBug: getBug,
+  getStats: getStats,
+  getUser: getUser
+}

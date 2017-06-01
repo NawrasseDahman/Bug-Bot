@@ -87,11 +87,7 @@ let edit = {
       }
 
       trello.get("/1/cards/" + key, {}, function(errorTrello, urlData) {
-        if(!!errorTrello) {
-          console.log("edit getTrello\n" + errorTrello);
-          return;
-        }
-        
+
         if(!report && !urlData && !urlData.id) { //Check if the key is correct
           utils.botReply(bot, userID, channelID, "I can't seem to find the report on Trello or in the Queue, you should double check your key.", command, msg.id, false);
           return;

@@ -6,7 +6,7 @@ const commandList = require('./src/commandList')();
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('./data/data.sqlite');
 const utils = require("./src/utils");
-const getBug = require('./src/getBug');
+const modUtils = require('./src/modUtils');
 const backup = require('./src/backup');
 const dateFormat = require('dateformat');
 const fs = require('fs');
@@ -89,7 +89,9 @@ bot.on('messageCreate', (msg) => {
   let command = messageSplit.shift();
   let channelID = msg.channel.id;
   let userTag = msg.author.username + "#" + msg.author.discriminator;
-      userTag = userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
+  if(!!userTag) {
+    userTag = userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
+  }
   let userID = msg.author.id;
 
   if(!!msg.channel.guild) {
@@ -141,8 +143,20 @@ bot.on('messageCreate', (msg) => {
     let getUser = getGuild.members.get((msg.author.id));
     let getPerms = getUser.roles.indexOf(config.roles.devRole) && getUser.roles.indexOf(config.roles.adminRole) && getUser.roles.indexOf(config.roles.trelloModRole);
 
-    if(getPerms !== -1 && command.toLowerCase() === "!bug") {
-      getBug(bot, channelID, userTag, userID, command, msg, trello, db);
+    if(getPerms === -1) {
+      return;
+    }
+
+    switch (command.toLowerCase()) {
+      case "!bug":
+        modUtils.getBug(bot, channelID, userTag, userID, command, msg, trello, db);
+        break;
+      case "!stats":
+        modUtils.getStats(bot, channelID, userTag, userID, command, msg, trello, db);
+        break;
+      case "!getuser":
+        modUtils.getUser(bot, channelID, userTag, userID, command, msg, trello, db);
+        break;
     }
   }
 });

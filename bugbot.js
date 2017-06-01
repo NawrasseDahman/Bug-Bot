@@ -45,6 +45,7 @@ commandList.add('adminCommands');
 commandList.add('approveDeny');
 commandList.add('attachment');
 commandList.add('edit');
+commandList.add('how_I_Learned_To_Stop_Worrying_And_Love_bot_Commands');
 commandList.add('modCommands');
 commandList.add('reproductions');
 commandList.add('revoke');

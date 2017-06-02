@@ -31,7 +31,6 @@ let revoke = {
       bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
         let oldReport = reportMsg.content.split("Report ID: **" + key + "**");
         let split = oldReport[1];
-
         let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
         let newRegex = new RegExp(pattern, "i");
 
@@ -61,7 +60,7 @@ let revoke = {
           }
           bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).then(() => {
             utils.botReply(bot, userID, channelID, "you have successfully removed your input on **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + userTag + "** removed their input on **#" + key + "**");
+            bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + utils.cleanUserTag(userTag) + "** removed their input on **#" + key + "**");
           }).catch(err => {console.log("edit out - revoke\n" + err);});
         });
 

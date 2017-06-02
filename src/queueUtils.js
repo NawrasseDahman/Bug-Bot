@@ -9,7 +9,7 @@ function deniedReport(bot, msg, db, key, reportInfo) {
   db.all("SELECT info, userTag FROM reportQueueInfo WHERE id = ? AND stance = 'deny'", [key], function(error, DBReportInfo) {
 
     let DBReportInfoArray = DBReportInfo.map(function(allInfo){
-      return allInfo.userTag + " | " + allInfo.info;
+      return utils.cleanUserTag(allInfo.userTag) + " | " + allInfo.info;
     });
 
     bot.deleteMessage(config.channels.queueChannel, reportInfo.reportMsgID).then(() => {
@@ -19,7 +19,7 @@ function deniedReport(bot, msg, db, key, reportInfo) {
           bot.createMessage(DMInfo.id, "Hi " + DMInfo.recipient.username + ", unfortunately the bug you reported earlier: `" + reportInfo.header + "` was denied because:\n- `" + DBReportInfoArray.join('`\n- `') +
           "`\n\nYou should try adding as much information as you can when you resubmit it. Here are some helpful tips:\n- Does your bug only happen on a specific version of the operating system?\n- Does your bug only happen on a specific device?\n- Try to be as specific as possible. Generalities like \"it glitches\" aren't helpful and lead to confusion.\n- Try to keep each repro step to a single action.\n\nThank you though for the report and we look forward to your next one! :thumbsup:\n\nBelow you'll find your original submit message:\n```\n!submit " +
           reportInfo.header + " | " + reportInfo.reportString + "```").catch(() => {
-            bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + userTag + "**. Report **#" + key + "** denied.");
+            bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** denied.");
           });
         });
       }).catch((error) => {console.log("deniedReport | createMessage denied because:\n" + error)});
@@ -51,12 +51,12 @@ function queueReport (bot, userTag, userID, channelID, db, msg, reportCapLinks, 
         cardID = config.cards.linuxCard;
       }
       queueReportString = queueReportString.replace(/(\`|\~|\_|\ˋ)/gi, "\\$&");
-      bot.createMessage(config.channels.queueChannel, "───────────────────\n<#" + channelID + "> **" + userTag + "** Reported:\n" + queueReportString + "\n\nThe report above needs to be approved.\nReport ID: **" + reportID + "**\n").then((qMsg) => {
+      bot.createMessage(config.channels.queueChannel, "───────────────────\n<#" + channelID + "> **" + utils.cleanUserTag(userTag) + "** Reported:\n" + queueReportString + "\n\nThe report above needs to be approved.\nReport ID: **" + reportID + "**\n").then((qMsg) => {
         let queueMsgID = qMsg.id;
 
         db.run("INSERT INTO reports(id, header, reportString, userID, userTag, cardID, reportStatus, canRepro, cantRepro, reportMsgID, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime())", [reportID, header, reportCapLinks, userID, userTag, cardID, 'queue', 0, 0, queueMsgID], function(err) {if(!!err){console.log(err);}}); //message ID of report in Queue, later changed to ID in main chat. And time the report was reported (for statistical purposes)
         utils.botReply(bot, userID, channelID, "your bug has been added to the approval queue. You will be notified when the status of your report updates.", null, msg.id, false);
-        bot.createMessage(config.channels.modLogChannel, ":pencil: **" + userTag + "** submitted `" + header + "` in <#" + channelID + ">"); //log to bot-log
+        bot.createMessage(config.channels.modLogChannel, ":pencil: **" + utils.cleanUserTag(userTag) + "** submitted `" + header + "` in <#" + channelID + ">"); //log to bot-log
       }).catch((err) => {console.log("queueUtils | createQueue Msg\n" + err);});
     });
   });
@@ -87,14 +87,14 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
                 let newRegex = new RegExp(regex, "gi");
 
-                let newRepro = "<:greenTick:" + config.emotes.greenTick + "> **" + userTag + "**: `" + ADcontent + "`";
+                let newRepro = "<:greenTick:" + config.emotes.greenTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`";
                 let replace = split.replace(newRegex, newRepro);
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**" +  replace;
                 bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve update\n" + err);}).catch((err) => {console.log("queueUtils | editApprove Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully changed your stance on report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + userTag + "** updated their approval: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + utils.cleanUserTag(userTag) + "** updated their approval: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       } else { //new reportQueueInfo entries. Add XP here
@@ -106,12 +106,12 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
             } else {
               if(!!editMsgCont) {
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
-                let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:greenTick:" + config.emotes.greenTick + "> **" + userTag + "**: `" + ADcontent + "`" + splitMsg[1];
+                let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:greenTick:" + config.emotes.greenTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`" + splitMsg[1];
                 bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit approve new\n" + err);}).catch((err) => {console.log("queueUtils | addNewApproval Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully approved report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + userTag + "** approved: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsup: **" + utils.cleanUserTag(userTag) + "** approved: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       }
@@ -139,7 +139,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
                 let newRegex = new RegExp(regex, "gi");
 
-                let newRepro = "<:redTick:" + config.emotes.redTick + "> **" + userTag + "**: `" + ADcontent + "`";
+                let newRepro = "<:redTick:" + config.emotes.redTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`";
                 let replace = split.replace(newRegex, newRepro);
                 let newMsg = splitMsg[0] + "Report ID: **" + key + "**" + replace;
 
@@ -147,7 +147,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully changed your stance on report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** updated their denial: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + utils.cleanUserTag(userTag) + "** updated their denial: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       } else { //new reportQueueInfo entries.
@@ -159,12 +159,12 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
             } else { //Add XP here
               if(!!editMsgCont) {
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
-                let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:redTick:" + config.emotes.redTick + "> **" + userTag + "**: `" + ADcontent + "`" + splitMsg[1];
+                let newMsg = splitMsg[0] + "Report ID: **" + key + "**\n<:redTick:" + config.emotes.redTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`" + splitMsg[1];
                 bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).catch(err => {console.log("edit Deny new\n" + err);}).catch((err) => {console.log("queueUtils | newDenial Msg\n" + err);});
               }
             }
             utils.botReply(bot, userID, channelID, "you've successfully denied report **#" + key + "**", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + userTag + "** denied: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
+            bot.createMessage(config.channels.modLogChannel, ":thumbsdown: **" + utils.cleanUserTag(userTag) + "** denied: **#" + key + "** `" + reportInfo.header + "` | `" + ADcontent + "`"); //log to bot-log
           });
         });
       }
@@ -172,15 +172,16 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
   }
 }
 
-function editDBReport(bot, trello, db, userTag, userID, key, editSection, newContent, msg, channelID, oldReportString) {
+function editDBReport(bot, trello, db, key, editSection, newContent, oldReportString) {
   if(editSection === "short description") {
     db.run("UPDATE reports SET header = ? WHERE id = ?", [newContent, key]);
   } else {
     let requiredFields = ["steps to reproduce", "expected result", "actual result", "client setting", "system setting"];
     let thisIndex = requiredFields.indexOf(editSection);
-    let regex = "(" + editSection + ")s?:\\s*(.*)(?:" + requiredFields[thisIndex + 1] + ")";
-    let newRegex = new RegExp(regex, "i");
-    let newReport = oldReportString.replace(regex, newContent);
+    let pattern = "(" + editSection + ")s?:\\s*(.*)(?=\\s" + requiredFields[thisIndex + 1] + ")s?";
+    let newRegex = new RegExp(pattern, "i");
+    let newReport = oldReportString.replace(newRegex, utils.toTitleCase(editSection) + ": " + newContent);
+    console.log(newReport);
     db.run("UPDATE reports SET reportString = ? WHERE id = ?", [newReport, key]);
   }
 }

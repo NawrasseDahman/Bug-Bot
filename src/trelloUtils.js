@@ -38,13 +38,13 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
             postChannelID = config.channels.linuxChannel;
             break;
         }
-        bot.createMessage(postChannelID, "───────────────────────\nReported By **" + report.userTag + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
+        bot.createMessage(postChannelID, "───────────────────────\nReported By **" + utils.cleanUserTag(report.userTag) + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
           // change reportStatus, trelloURL & queueMsgID
           // attach all attachments to the trello post
           let trelloURL = data.shortUrl.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?/i);
           let trelloUrlSuffix = trelloURL[1];
           db.run("UPDATE reports SET reportStatus = 'trello', trelloURL = ?, reportMsgID = ? WHERE id = ?", [trelloUrlSuffix, msgInfo.id, key]);
-          bot.createMessage(config.channels.modLogChannel, ":incoming_envelope: <#" + postChannelID + "> **" + report.userTag + "** - `" + report.header + "` <" + data.shortUrl + ">\n" + key); //log to bot-log
+          bot.createMessage(config.channels.modLogChannel, ":incoming_envelope: <#" + postChannelID + "> **" + utils.cleanUserTag(report.userTag) + "** - `" + report.header + "` <" + data.shortUrl + ">\n" + key); //log to bot-log
 
           setTimeout(function() {
             db.each('SELECT userID, userTag, attachment FROM reportAttachments WHERE id = ?', [key], function(error, attachmentData) {
@@ -87,7 +87,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
     }
     bot.getDMChannel(userID).then((DMInfo) => {
       bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {
-        bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + userTag + "**. Report **#" + key + "** approved. <" + shortUrl + ">");
+        bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** approved. <" + shortUrl + ">");
       });
     }).catch((err) => {
       console.log("trelloUtils gerUserInfo DM\n" + err);
@@ -99,7 +99,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
       getUserInfo(userID, userTag, postChannelID, shortUrl, key);
     }, 2000);
   } else {
-    bot.createMessage(config.channels.modLogChannel, ":warning: Couldn't fetch user info on " + userTag + ", user might need a new role!");
+    bot.createMessage(config.channels.modLogChannel, ":warning: Couldn't fetch user info on " + utils.cleanUserTag(userTag) + ", user might need a new role!");
     loopGetUserInfo = 0;
   }
 }
@@ -110,7 +110,7 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
 
     var cardUpdated = function(error, data){
       utils.botReply(bot, userID, channelID, ", `" + utils.toTitleCase(editSection) + "` has been updated to `" + newContent + "`", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
     }
     var updateCard = {
       value: newContent
@@ -119,14 +119,14 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
 
   } else {
     //edit desc
-    let regex = "(" + editSection + ")s?:\s*(?:\\n)*\s*(.*?)(?=(?:\s*\\n)?#)";
-    let newRegex = new RegExp(regex, "i");
+    let pattern = "(" + editSection + ")s?:\s*(?:\\n)*\s*(.*?)(?=(?:\s*\\n)?#)";
+    let newRegex = new RegExp(pattern, "i");
     let trelloDesc = urlData.desc;
     let editTrelloString = trelloDesc.replace(newRegex, utils.toTitleCase(editSection) + ":\n " + newContent);
 
     var cardUpdated = function(error, data){
       utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + userTag + "** edited `" + utils.toTitleCase(editSection) + "` <" + data.shortUrl + ">");
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
     }
 
     var updateCard = {

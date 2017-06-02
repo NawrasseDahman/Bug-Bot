@@ -4,3 +4,4 @@ configEdit.js
 commands/voteMute.js
 commands/xp.js
 .gitignore
+config.js

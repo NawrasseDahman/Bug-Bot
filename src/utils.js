@@ -37,11 +37,16 @@ function botReply (bot, userID, channelID, error, command, msgID, minute) {
 }
 
 function toTitleCase(editString) {
-    return editString.replace(/\w\S*/g, function(text) { return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();});
+  return editString.replace(/\w\S*/, function(text) { return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();});
+}
+
+function cleanUserTag(userTag) {
+  return userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
 }
 
 module.exports = {
   delay: delay,
   botReply: botReply,
-  toTitleCase: toTitleCase
+  toTitleCase: toTitleCase,
+  cleanUserTag: cleanUserTag
 };

@@ -4,14 +4,14 @@ const reproUtils = require("../src/reproUtils");
 const utils = require("../src/utils");
 
 let reproduction = {
-  pattern: /!canrepro|!cantrepro|!cannotrepro|!cnr|!cntr/i,
+  pattern: /!canrepro|!cantrepro|!cannotrepro|!cr|!cnr/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     var msgSplit = msg.content.split(" ");
     var joinedMsg = msgSplit.join(" ");
     var msgContent = joinedMsg.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|\s*([\s\S]*)/i);
     switch (command.toLowerCase()) {
       case "!canrepro":
-      case "!cnr":
+      case "!cr":
         var reproduction = "Can reproduce.";
         var emoji = "\n<:greenTick:" + config.emotes.greenTick + "> ";
 
@@ -24,7 +24,7 @@ let reproduction = {
         break;
       case "!cantrepro":
       case "!cannotrepro":
-      case "!cntr":
+      case "!cnr":
         var reproduction = "Can't reproduce.";
         var emoji = "\n<:redTick:" + config.emotes.redTick + "> ";
 

@@ -16,7 +16,7 @@ function attachUtils (bot, channelID, userTag, userID, command, msg, trello, tre
         });
 
         if(!!gotMsg) {
-          let newMsg = gotMsg.content + "\n:paperclip: **" + userTag + "** | " + attachment;
+          let newMsg = gotMsg.content + "\n:paperclip: **" + utils.cleanUserTag(userTag) + "** | " + attachment;
           bot.editMessage(config.channels.queueChannel, reportMsgID, newMsg).catch((err) => {console.log("attachUtils | editQueueMsg\n" + err);});
           bot.editMessage(channelID, gotMsg.id, newMsg).catch((err) => {console.log("attachUtils | editMsg\n" + err);});
         }
@@ -25,7 +25,7 @@ function attachUtils (bot, channelID, userTag, userID, command, msg, trello, tre
         }, customConfig.delayInS * 800);
       }).catch(error => {console.log("attachUtils getMSG\n" + error);});
     }
-    bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + userTag + "**: `" + urlDataName + "` <https://trello.com/c/" + trelloURL + ">");
+    bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + utils.cleanUserTag(userTag) + "**: `" + urlDataName + "` <https://trello.com/c/" + trelloURL + ">");
   }
 
   let addAttachment = {

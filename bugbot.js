@@ -45,11 +45,10 @@ commandList.add('adminCommands');
 commandList.add('approveDeny');
 commandList.add('attachment');
 commandList.add('edit');
-commandList.add('how_I_Learned_To_Stop_Worrying_And_Love_bot_Commands');
 commandList.add('modCommands');
 commandList.add('reproductions');
 commandList.add('revoke');
-commandList.add('storeInfo');
+commandList.add('how_I_Learned_To_Stop_Worrying_And_Love_bot_Commands.js');
 commandList.add('submit');
 
 function userHasRole(user, role) {
@@ -90,9 +89,6 @@ bot.on('messageCreate', (msg) => {
   let command = messageSplit.shift();
   let channelID = msg.channel.id;
   let userTag = msg.author.username + "#" + msg.author.discriminator;
-  if(!!userTag) {
-    userTag = userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
-  }
   let userID = msg.author.id;
 
   if(!!msg.channel.guild) {

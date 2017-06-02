@@ -160,7 +160,7 @@ let submitCommand = {
                 return;
               }
               sysSettings = dbReplySI[whichOS];
-
+              newReportString = newReportString.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, dbReplySI[whichOS]);
               let queueReportString = "\n**Short description:** " + header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
 
               queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, newReportString, queueReportString, header);

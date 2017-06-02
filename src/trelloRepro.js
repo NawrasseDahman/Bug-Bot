@@ -26,7 +26,7 @@ function addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID
         utils.botReply(bot, userID, channelID, "your repro has been successfully added to the Trello Ticket! We cap the number of can/notRepro's shown here at " + customConfig.reproAttempts + ", but your info is safe and sound!", command, msgID, false);
       }
 
-      bot.createMessage(config.channels.modLogChannel, emoji + " **" + userTag + "** " + reproduction + " `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">");
+      bot.createMessage(config.channels.modLogChannel, emoji + " **" + utils.cleanUserTag(userTag) + "** " + reproduction + " `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">");
     }
   }
 

@@ -59,11 +59,11 @@ let attach = {
             utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
           } else {
             bot.getMessage(config.channels.queueChannel, report.reportMsgID).then((msgContent) => {
-              let newMsg = msgContent.content + "\n:paperclip: **" + userTag + "**: " + attachment;
+              let newMsg = msgContent.content + "\n:paperclip: **" + utils.cleanUserTag(userTag) + "**: " + attachment;
               db.run("INSERT INTO reportAttachments (id, userID, userTag, attachment) VALUES (?, ?, ?, ?)", [key, userID, userTag, attachment], function() {
                 bot.editMessage(config.channels.queueChannel, report.reportMsgID, newMsg).catch((err) => {console.log("editInAttachment\n" + err);});
                 utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
-                bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + userTag + "**: `" + report.header + "` **#" + key + "**");
+                bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + utils.cleanUserTag(userTag) + "**: `" + report.header + "` **#" + key + "**");
               });
             }).catch(error => {console.log("Attach DB GetMSG\n" + error);});
           }

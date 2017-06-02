@@ -60,7 +60,7 @@ let addNote = {
           bot.getMessage(channelID, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
-              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + utils.cleanUserTag(userTag) + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(channelID, reportInfo.reportMsgID, editMsgCreate).catch((err) => {console.log("editMsg Chat Trello\n" + err);});
             }
@@ -72,7 +72,7 @@ let addNote = {
           bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("Report ID: **" + key + "**");
-              let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + utils.cleanUserTag(userTag) + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, editMsgCreate).catch((err) => {console.log("editMsg Chat queue\n" + err);});
             }
@@ -87,7 +87,7 @@ let addNote = {
             });
             if(!!reportMsg) {
               let splitMsg = reportMsg.content.split("**Reproducibility:**");
-              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + userTag + "**: `" + note + "`" + splitMsg[1];
+              let editMsgCreate = splitMsg[0] + "**Reproducibility:**\n:pencil: **" + utils.cleanUserTag(userTag) + "**: `" + note + "`" + splitMsg[1];
 
               bot.editMessage(channelID, reportMsg.id, editMsgCreate).catch((err) => {console.log("editMsg legacy Chat\n" + err);});
             }

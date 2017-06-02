@@ -52,7 +52,7 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
     }
   }
 
-  let newRepro = emoji + "**" + userTag + "** | `" + reproCnt + "`";
+  let newRepro = emoji + "**" + utils.cleanUserTag(userTag) + "** | `" + reproCnt + "`";
   let replace = splitOne.replace(newRegex, newRepro);
   let editMsgCreate;
 

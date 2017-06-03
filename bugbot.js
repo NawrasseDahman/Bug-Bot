@@ -46,9 +46,10 @@ commandList.add('approveDeny');
 commandList.add('attachment');
 commandList.add('edit');
 commandList.add('modCommands');
+commandList.add('how_I_Learned_To_Stop_Worrying_And_Love_bot_Commands');
 commandList.add('reproductions');
 commandList.add('revoke');
-commandList.add('how_I_Learned_To_Stop_Worrying_And_Love_bot_Commands.js');
+commandList.add('storeInfo');
 commandList.add('submit');
 
 function userHasRole(user, role) {

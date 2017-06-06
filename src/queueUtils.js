@@ -84,7 +84,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
                 let split = splitMsg[1];
 
-                let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
+                let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
                 let newRegex = new RegExp(regex, "gi");
 
                 let newRepro = "<:greenTick:" + config.emotes.greenTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`";
@@ -136,7 +136,7 @@ function addAD(bot, channelID, userTag, userID, command, msg, db, key, ADcontent
                 let splitMsg = editMsgCont.content.split("Report ID: **" + key + "**");
                 let split = splitMsg[1];
 
-                let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
+                let regex = "(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
                 let newRegex = new RegExp(regex, "gi");
 
                 let newRepro = "<:redTick:" + config.emotes.redTick + "> **" + utils.cleanUserTag(userTag) + "**: `" + ADcontent + "`";

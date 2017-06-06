@@ -31,7 +31,7 @@ let revoke = {
       bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
         let oldReport = reportMsg.content.split("Report ID: **" + key + "**");
         let split = oldReport[1];
-        let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
+        let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
         let newRegex = new RegExp(pattern, "i");
 
         let matchTick = split.match(newRegex);

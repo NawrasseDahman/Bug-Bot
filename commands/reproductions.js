@@ -15,10 +15,23 @@ let reproduction = {
         var reproduction = "Can reproduce.";
         var emoji = "\n<:greenTick:" + config.emotes.greenTick + "> ";
 
-        if(!msgContent || !msgContent[1] || !msgContent[2]){
+        if(!msgContent || !msgContent[1] || !msgContent[2]) {
           utils.botReply(bot, userID, channelID, "please provide a valid URL, a client version, and make sure the issue is not closed.", command, msg.id);
           return;
         }
+
+        bot.getMessages(channelID).then((msgs) => {
+
+          let findMessage = msgs.find(function(info) {
+            return info.author.id === config.botID && info.content.indexOf(msgContent[1]) > -1;
+          });
+          
+          if(!!findMessage && findMessage.length !== 1) {
+            return utils.botReply(bot, userID, channelID, "there are several reports with that ID, please use the trello link", command, msg.id);
+          }
+        }).catch((err) => {
+          console.log("reproduction | canRepro checkup\n" + err);
+        });
 
         reproUtils.preCheckReproSetup(bot, msgContent[1], msgContent[2], reproduction, userTag, channelID, msg.id, userID, emoji, trello, db, command);
         break;
@@ -28,10 +41,23 @@ let reproduction = {
         var reproduction = "Can't reproduce.";
         var emoji = "\n<:redTick:" + config.emotes.redTick + "> ";
 
-        if(!msgContent || !msgContent[1] || !msgContent[2]){
+        if(!msgContent || !msgContent[1] || !msgContent[2]) {
           utils.botReply(bot, userID, channelID, "please provide a valid URL, a client version, and make sure the issue is not closed.", command, msg.id);
           return;
         }
+
+        bot.getMessages(channelID).then((msgs) => {
+
+          let findMessage = msgs.find(function(info) {
+            return info.author.id === config.botID && info.content.indexOf(msgContent[1]) > -1;
+          });
+
+          if(!!findMessage && findMessage.length !== 1) {
+            return utils.botReply(bot, userID, channelID, "there are several reports with that ID, please use the trello link", command, msg.id);
+          }
+        }).catch((err) => {
+          console.log("reproduction | cantRepro checkup\n" + err);
+        });
 
         reproUtils.preCheckReproSetup(bot, msgContent[1], msgContent[2], reproduction, userTag, channelID, msg.id, userID, emoji, trello, db, command);
         break;

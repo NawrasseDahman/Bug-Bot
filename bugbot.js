@@ -92,6 +92,10 @@ bot.on('messageCreate', (msg) => {
   let userTag = msg.author.username + "#" + msg.author.discriminator;
   let userID = msg.author.id;
 
+  if(!!msg.channel.guild && msg.channel.guild.id !== config.DTserverID) {
+    return;
+  }
+
   if(!!msg.channel.guild) {
 
     if(userID === "84815422746005504" && command.toLowerCase() === "!log") {

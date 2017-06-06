@@ -17,7 +17,6 @@ function botReply (bot, userID, channelID, error, command, msgID, minute) {
       bot.deleteMessage(channelID, msgID).catch(() => {});
     }).catch((error) => {
       console.log("#utils | botReply submit command\n" + error);
-      //bot.createMessage() Log to channel
     });
   } else if(minute === true) {
     bot.createMessage(channelID, '<@' + userID + '> ' + error).then(delay(customConfig.minuteDelay)).then((msgInfo) => {
@@ -44,9 +43,14 @@ function cleanUserTag(userTag) {
   return userTag.replace(/(\*|\`|\~|\_)/gi, "\\$&");
 }
 
+function cleanUserTagRegex(userTag) {
+  return userTag.replace(/[\[\\\^\$\.\|\?\*\+\(\)\{\}]/gi, "\\$&");
+}
+
 module.exports = {
   delay: delay,
   botReply: botReply,
   toTitleCase: toTitleCase,
-  cleanUserTag: cleanUserTag
+  cleanUserTag: cleanUserTag,
+  cleanUserTagRegex: cleanUserTagRegex
 };

@@ -27,7 +27,7 @@ function addRepro(bot, userID, channelID, msgID, trello, db, reproCnt, reportKey
 
   let splitMsg = msgContent.split('**Reproducibility:**');
   let splitOne = splitMsg[1];
-  let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + userTag + "\\*\\*):?\\s(.*)";
+  let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
   let newRegex = new RegExp(pattern, "i");
 
   let matchTick = splitOne.match(newRegex);

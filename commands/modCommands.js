@@ -18,7 +18,7 @@ let modCommands = {
         break;
 
         case "!bug":
-          modUtils.getBug(bot, channelID, userTag, userID, command, msg, trello, db);
+          modUtils.getBug(bot, channelID, userID, command, msg, db);
           //DM person everything about a report
           break;
 

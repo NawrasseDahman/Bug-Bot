@@ -10,6 +10,7 @@ var config = {
     modLogChannel: "313746856155021312",      //mod log text Channel
     bugHunterChannel: '217764019661045761',   //bug hunter text Channel
     queueChannel: '253923313460445184',       //bug approval text channel
+    deniedBugChannel: '327914056591736834',   //denied bug text Channel
     allChannels: 'allChannels'                //fake channel for everyone
   },
 

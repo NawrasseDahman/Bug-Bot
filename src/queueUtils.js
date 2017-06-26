@@ -2,6 +2,7 @@
 const config = require("../config");
 const customConfig = require('../configEdit');
 const utils = require("./utils");
+const modUtils = require('./modUtils');
 const tutils = require("./trelloUtils");
 
 function deniedReport(bot, msg, db, key, reportInfo) {
@@ -21,6 +22,7 @@ function deniedReport(bot, msg, db, key, reportInfo) {
           reportInfo.header + " | " + reportInfo.reportString + "```").catch(() => {
             bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** denied.");
           });
+            modUtils.getBug(bot, config.channels.deniedBugChannel, key, null, null, db);
         });
       }).catch((error) => {console.log("deniedReport | createMessage denied because:\n" + error)});
     }).catch(() => {});

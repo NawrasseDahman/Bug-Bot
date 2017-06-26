@@ -46,12 +46,7 @@ let edit = {
         return;
       }
 
-      let cleanNewContent;
-      if(!!newContent.match(/(\*|\`|\~|\_|ˋ)/i)){
-        cleanNewContent = newContent.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
-      } else {
-        cleanNewContent = newContent;
-      }
+      let cleanNewContent = utils.preCleanInputText(newContent, false);
 
       if(!cleanNewContent) {
         utils.botReply(bot, userID, channelID, "you forgot to add your new content!", command, msg.id);
@@ -63,6 +58,7 @@ let edit = {
         case "title":
         case "short description":
           editSection = "short description";
+          cleanNewContent = '\n' + cleanNewContent;
         break;
         case "body":
         case "str":
@@ -72,17 +68,21 @@ let edit = {
         break;
         case "expected":
           editSection = "expected result";
+          cleanNewContent = '\n' + cleanNewContent;
         break;
         case "actual":
           editSection = "actual result";
+          cleanNewContent = '\n' + cleanNewContent;
         break;
         case "cs":
         case "client":
           editSection = "client settings";
+          cleanNewContent = '\n' + cleanNewContent;
         break;
         case "ss":
         case "system":
           editSection = "system settings";
+          cleanNewContent = '\n' + cleanNewContent;
         break;
       }
 
@@ -165,6 +165,7 @@ let edit = {
     config.channels.androidChannel,
     config.channels.linuxChannel,
     config.channels.queueChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = edit;

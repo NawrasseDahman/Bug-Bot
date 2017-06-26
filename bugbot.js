@@ -29,7 +29,7 @@ bot.on("ready", () => {
   db.run("CREATE TABLE IF NOT EXISTS reports (id INTEGER, header TEXT, reportString TEXT, userID TEXT, userTag TEXT, cardID TEXT, reportStatus TEXT, trelloURL TEXT, canRepro INTEGER, cantRepro INTEGER, reportMsgID TEXT, timestamp TEXT)");
   db.run("CREATE TABLE IF NOT EXISTS reportQueueInfo (id INTEGER, userID TEXT, userTag TEXT, info TEXT, stance TEXT)");
   db.run("CREATE TABLE IF NOT EXISTS reportAttachments (id INTEGER, userID TEXT, userTag TEXT, attachment TEXT)");
-  db.run("CREATE TABLE IF NOT EXISTS users (userID TEXT, xp INTEGER, windows TEXT, ios TEXT, android TEXT, macOS TEXT, linux TEXT, reproDailyNumb INTEGER, ADdailyNumb INTEGER, hugDailyNumb INTEGER)");
+  db.run("CREATE TABLE IF NOT EXISTS users (userID TEXT, xp INTEGER, windows TEXT, ios TEXT, android TEXT, macOS TEXT, linux TEXT, reproDailyNumb INTEGER, ADdailyNumb INTEGER, hugDailyNumb INTEGER, trackReport BOOLEAN)");
   bot.createMessage(config.channels.modLogChannel, "I heard there are bugs that needs reporting. I'm online and ready to rumble!");
 
   if(reconnect === false) {
@@ -64,8 +64,8 @@ function userHasAuthorityForCommand(user, command) {
   return command.roles.some(role => userHasRole(user, role));
 }
 
-function correctChannel(guild, channel){
-  return guild.id === channel;
+function correctChannel(guildChannel, channel){
+  return guildChannel.id === channel;
 }
 
 function correctChannelIsBeingUsed(guild, command) {
@@ -73,6 +73,12 @@ function correctChannelIsBeingUsed(guild, command) {
     return true;
   }
   return command.channels.some(channel => correctChannel(guild, channel));
+}
+
+function checkIfDM(command) {
+  if(command.acceptFromDM === true) {
+    return true;
+  }
 }
 
 bot.on('guildMemberUpdate', (guild, member, oldMember) => {
@@ -88,33 +94,31 @@ let delMsgCooldown = false;
 bot.on('messageCreate', (msg) => {
   let messageSplit = msg.content.split(' ');
   let command = messageSplit.shift();
-  let channelID = msg.channel.id;
-  let userTag = msg.author.username + "#" + msg.author.discriminator;
-  let userID = msg.author.id;
-
   if(!!msg.channel.guild && msg.channel.guild.id !== config.DTserverID) {
     return;
   }
 
-  if(!!msg.channel.guild) {
-
-    if(userID === "84815422746005504" && command.toLowerCase() === "!log") {
-      let now = new Date();
-      let thisCycle = dateFormat(now, "UTC:mm-dd-yyyy-HH-MM");
-      let bufferString = fs.readFileSync('./logs/bblog.log');
-      bot.getDMChannel(userID).then((thisDM) => {
-        bot.createMessage(thisDM.id, null, {file: bufferString, name: "log-" + thisCycle + ".log"}).catch((error) => {console.log(error);});
-      });
-    }
-
-    let dev = msg.member.roles.indexOf(config.roles.devRole);
-    let admin = msg.member.roles.indexOf(config.roles.adminRole);
-    let mod = msg.member.roles.indexOf(config.roles.trelloModRole);
+  let userTag = msg.author.username + "#" + msg.author.discriminator;
+  let userID = msg.author.id;
 
     if(command.match(/^!/)) {
+
       let matchingCommand = commandList.find(command);
+      let channelID = msg.channel.id;
+      let thisMember = msg.member;
+
+      if(!msg.channel.guild) {
+        if(matchingCommand.acceptFromDM === true) {
+          let getGuild = bot.guilds.get(config.DTserverID);
+          let getMember = getGuild.members.get((msg.author.id));
+              thisMember = getMember;
+        } else {
+          return;
+        }
+      }
+
       //check for roles
-      if(userHasAuthorityForCommand(msg.member, matchingCommand)) {
+      if(userHasAuthorityForCommand(thisMember, matchingCommand)) {
         //check for channel
         if(correctChannelIsBeingUsed(msg.channel, matchingCommand)){
           matchingCommand.execute(bot, channelID, userTag, userID, command, msg, trello, db);
@@ -127,40 +131,19 @@ bot.on('messageCreate', (msg) => {
         utils.botReply(bot, userID, channelID, "you do not have access to that command", command, msg.id, true);
       }
     }else {
-      let isRightChannel = channelID === config.channels.queueChannel || channelID === config.channels.iosChannel || channelID === config.channels.linuxChannel || channelID === config.channels.androidChannel || channelID === config.channels.canaryChannel;
-      let isNotMod = dev === -1 && admin === -1 && mod === -1;
-      let isNotBot = userID !== config.botID;
+      if(!!msg.channel.guild) {
+        let isNotMod = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
+        let isNotBot = userID !== config.botID;
 
-      if(isNotBot && isNotMod && isRightChannel) {
-        //Delete and say commands only on delay
-        bot.deleteMessage(channelID, msg.id);
-        if(delMsgCooldown === false){
-          delMsgInReportingChannel(channelID, userID);
+        if(isNotBot && isNotMod === -1 && isRightChannel) {
+          //Delete and say commands only on delay
+          bot.deleteMessage(channelID, msg.id);
+          if(delMsgCooldown === false){
+            delMsgInReportingChannel(channelID, userID);
+          }
         }
       }
     }
-
-  } else {
-    let getGuild = bot.guilds.get(config.DTserverID);
-    let getUser = getGuild.members.get((msg.author.id));
-    let getPerms = getUser.roles.indexOf(config.roles.devRole) && getUser.roles.indexOf(config.roles.adminRole) && getUser.roles.indexOf(config.roles.trelloModRole);
-
-    if(getPerms === -1) {
-      return;
-    }
-
-    switch (command.toLowerCase()) {
-      case "!bug":
-        modUtils.getBug(bot, channelID, userTag, userID, command, msg, trello, db);
-        break;
-      case "!stats":
-        modUtils.getStats(bot, channelID, userTag, userID, command, msg, trello, db);
-        break;
-      case "!getuser":
-        modUtils.getUser(bot, channelID, userTag, userID, command, msg, trello, db);
-        break;
-    }
-  }
 });
 
 // Tell the user that they can only post commands in the reporting channel

@@ -53,11 +53,12 @@ let approveDeny = {
         utils.botReply(bot, userID, channelID, "this report has already been moved", command, msg.id, false);
         return;
       }
-      contentMessage[2] = contentMessage[2].replace(/(\*|`|\~|\_|\ˋ)/gi, "\\$&");
-      let whichClient = contentMessage[2].match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
-      let ADcontent;
+      
+      let cleanContent = utils.preCleanInputText(contentMessage[2], false);
+      let whichClient = cleanContent.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
+      let ADcontent = cleanContent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
-      if(!contentMessage[2]) {
+      if(!cleanContent) {
         utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msg.id, false);
         return;
       } else if(!!whichClient) {
@@ -79,7 +80,7 @@ let approveDeny = {
             console.log("getSystem\n" + error);
           }
           if(!!usrSys){
-            let info = contentMessage[2];
+            let info = cleanContent;
             ADcontent = info.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, " " + usrSys[system]);
             addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
           } else {
@@ -88,7 +89,6 @@ let approveDeny = {
           }
         });
       } else {
-        ADcontent = contentMessage[2];
         addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
       }
     });
@@ -101,6 +101,7 @@ let approveDeny = {
     ],
   channels: [
     config.channels.queueChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = approveDeny;

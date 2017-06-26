@@ -6,7 +6,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -29,11 +29,11 @@ let modCommands = {
 
           bot.deleteMessage(channelID, msg.id).then(() => {
             console.log("Restarting");
-            bot.createMessage(config.channels.modLogChannel, ":large_blue_diamond: Restart command used", {file: backupFile, name: "Backup-" + thisBackupTime + ".sqlite"}).then(() => {
+            bot.createMessage(config.channels.modLogChannel, `:large_blue_diamond: ${userTag} used restart! It was... hopefully super effective!`, {file: backupFile, name: "Backup-" + thisBackupTime + ".sqlite"}).then(() => {
               process.exit();
             });
             //restart the bot
-          });
+          }).catch(() => {});
           break;
 
         case "!getuser":
@@ -68,6 +68,21 @@ let modCommands = {
 
           bot.createMessage(config.channels.modLogChannel, null, {file: bufferString, name: "Backup-" + thisCycle + ".sqlite"});
           break;
+
+        case "!log":
+          if(userID === "84815422746005504") {
+            let now = new Date();
+            let thisCycle = dateFormat(now, "UTC:mm-dd-yyyy-HH-MM");
+            let bufferString = fs.readFileSync('./logs/bblog.log');
+            if(!!msg.channel.guild) {
+              bot.getDMChannel(userID).then((thisDM) => {
+                bot.createMessage(thisDM.id, null, {file: bufferString, name: "log-" + thisCycle + ".log"}).catch((error) => {console.log(error);});
+              });
+            } else {
+              bot.createMessage(channelID, null, {file: bufferString, name: "log-" + thisCycle + ".log"}).catch((error) => {console.log(error);});
+            }
+          }
+          break;
       }
   },
   roles: [
@@ -77,6 +92,7 @@ let modCommands = {
     ],
   channels: [
     config.channels.allChannels
-  ]
+  ],
+  acceptFromDM: true
 }
 module.exports = modCommands;

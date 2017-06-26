@@ -108,6 +108,7 @@ let addRoles = {
     ],
   channels: [
     config.channels.allChannels
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = addRoles;

@@ -10,7 +10,7 @@ function addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note,
         bot.deleteMessage(channelID, msgInfo.id).catch(() => {});
       }).catch((err) => {
         console.log("--> addNote | sendNote error\n" + err);
-        console.log("addedNote" + error);
+        console.log("addedNote Extra" + error);
       });
     }else{
       utils.botReply(bot, userID, channelID, "you've successfully added your note.", command, msg.id);
@@ -41,7 +41,7 @@ let addNote = {
     let key = matchContent[1];
     let note = matchContent[2];
 
-    note = note.replace(/(\*|\`|\~|\_|ˋ)/gi, "\\$&");
+    note = utils.preCleanInputText(note, false);
 
     db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key, function(error, reportInfo) {
       if(!!error) {
@@ -113,6 +113,7 @@ let addNote = {
     config.channels.androidChannel,
     config.channels.linuxChannel,
     config.channels.queueChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = addNote;

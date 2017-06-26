@@ -74,7 +74,7 @@ let storeSysInfo = {
       if(!!error){
         console.log(error);
       }
-      systemInfo = systemInfo.replace(/(\*|\`|\~|\_|ˋ)/gi, "");
+      systemInfo = utils.preCleanInputText(systemInfo, true);
 
       switch(whichOS.toLowerCase()) {
         case "windows":
@@ -108,6 +108,7 @@ let storeSysInfo = {
     ],
   channels: [
     config.channels.allChannels
-  ]
+  ],
+  acceptFromDM: true
 }
 module.exports = storeSysInfo;

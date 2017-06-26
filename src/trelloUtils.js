@@ -119,10 +119,18 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
 
   } else {
     //edit desc
-    let pattern = "(" + editSection + ")s?:\s*(?:\\n)*\s*(.*?)(?=(?:\s*\\n)?#)";
-    let newRegex = new RegExp(pattern, "i");
+    let pattern;
+
+    if(editSection === "system setting") {
+      pattern = editSection + "system settings?:\\n*\\s*([\\s\\S]*?)(?=(?:\\\n\\\n\\d))";
+    } else {
+      pattern = editSection + "s?:\\s*\\n*\\s*([\\s\\S]*?)(?=(?:\\s*\\n)?#)";
+    }
+
+    let newRegex = new RegExp(pattern, "ig");
+
     let trelloDesc = urlData.desc;
-    let editTrelloString = trelloDesc.replace(newRegex, utils.toTitleCase(editSection) + ":\n " + newContent);
+    let editTrelloString = trelloDesc.replace(newRegex, utils.toTitleCase(editSection) + ":\n" + newContent);
 
     var cardUpdated = function(error, data){
       utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msgID, false);

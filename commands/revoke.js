@@ -77,6 +77,7 @@ let revoke = {
     ],
   channels: [
     config.channels.queueChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = revoke;

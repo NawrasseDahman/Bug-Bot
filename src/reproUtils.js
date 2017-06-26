@@ -102,6 +102,9 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
     }
     trello.get("/1/cards/" + reportKey, {}, function(errorURL, urlData) {
       if(!!urlData){
+        if(!urlData.desc) {
+          utils.botReply(bot, userID, channelID, "Something seems to have gone wrong, please try again", command, msgID, false);
+        }
         if(!urlData.id) {
           utils.botReply(bot, userID, channelID, "incorrect url.", command, msgID, false);
           return;
@@ -111,7 +114,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           return;
         }
 
-        reproCnt = reproCnt.replace(/(\*|\`|\~|\_|\ˋ)/gi, "\\$&");
+        reproCnt = utils.preCleanInputText(reproCnt, false);
 
         let whichClient = reproCnt.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
         let system;

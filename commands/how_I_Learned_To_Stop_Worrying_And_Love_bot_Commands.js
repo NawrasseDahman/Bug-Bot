@@ -45,6 +45,7 @@ let fun = {
   ],
   channels: [
       config.channels.allChannels
-  ]
+  ],
+  acceptFromDM: false
 };
 module.exports = fun;

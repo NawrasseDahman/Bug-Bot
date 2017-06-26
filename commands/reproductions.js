@@ -19,20 +19,7 @@ let reproduction = {
           utils.botReply(bot, userID, channelID, "please provide a valid URL, a client version, and make sure the issue is not closed.", command, msg.id);
           return;
         }
-
-        bot.getMessages(channelID).then((msgs) => {
-
-          let findMessage = msgs.find(function(info) {
-            return info.author.id === config.botID && info.content.indexOf(msgContent[1]) > -1;
-          });
-          
-          if(!!findMessage && findMessage.length !== 1) {
-            return utils.botReply(bot, userID, channelID, "there are several reports with that ID, please use the trello link", command, msg.id);
-          }
-        }).catch((err) => {
-          console.log("reproduction | canRepro checkup\n" + err);
-        });
-
+        
         reproUtils.preCheckReproSetup(bot, msgContent[1], msgContent[2], reproduction, userTag, channelID, msg.id, userID, emoji, trello, db, command);
         break;
       case "!cantrepro":
@@ -46,19 +33,6 @@ let reproduction = {
           return;
         }
 
-        bot.getMessages(channelID).then((msgs) => {
-
-          let findMessage = msgs.find(function(info) {
-            return info.author.id === config.botID && info.content.indexOf(msgContent[1]) > -1;
-          });
-
-          if(!!findMessage && findMessage.length !== 1) {
-            return utils.botReply(bot, userID, channelID, "there are several reports with that ID, please use the trello link", command, msg.id);
-          }
-        }).catch((err) => {
-          console.log("reproduction | cantRepro checkup\n" + err);
-        });
-
         reproUtils.preCheckReproSetup(bot, msgContent[1], msgContent[2], reproduction, userTag, channelID, msg.id, userID, emoji, trello, db, command);
         break;
     }
@@ -71,6 +45,7 @@ let reproduction = {
     config.channels.canaryChannel,
     config.channels.androidChannel,
     config.channels.linuxChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = reproduction;

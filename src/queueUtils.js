@@ -50,7 +50,7 @@ function queueReport (bot, userTag, userID, channelID, db, msg, reportCapLinks, 
       } else if(channelID === config.channels.linuxChannel) {
         cardID = config.cards.linuxCard;
       }
-      queueReportString = queueReportString.replace(/(\`|\~|\_|\ˋ)/gi, "\\$&");
+
       bot.createMessage(config.channels.queueChannel, "───────────────────\n<#" + channelID + "> **" + utils.cleanUserTag(userTag) + "** Reported:\n" + queueReportString + "\n\nThe report above needs to be approved.\nReport ID: **" + reportID + "**\n").then((qMsg) => {
         let queueMsgID = qMsg.id;
 
@@ -181,7 +181,6 @@ function editDBReport(bot, trello, db, key, editSection, newContent, oldReportSt
     let pattern = "(" + editSection + ")s?:\\s*(.*)(?=\\s" + requiredFields[thisIndex + 1] + ")s?";
     let newRegex = new RegExp(pattern, "i");
     let newReport = oldReportString.replace(newRegex, utils.toTitleCase(editSection) + ": " + newContent);
-    console.log(newReport);
     db.run("UPDATE reports SET reportString = ? WHERE id = ?", [newReport, key]);
   }
 }

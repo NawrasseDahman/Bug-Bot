@@ -62,6 +62,7 @@ let adminCommands = {
     ],
   channels: [
     config.channels.queueChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = adminCommands;

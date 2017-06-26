@@ -112,7 +112,7 @@ let submitCommand = {
           sectionNames.add(matches[1].toLowerCase());
         }
 
-        reportCapLinks = reportCapLinks.replace(/(\*)/gi, '\\$&');
+        reportCapLinks = utils.preCleanInputText(reportCapLinks, false);
 
         checkSectionsExist(userID, reportCapLinks, channelID, sectionNames, db).then((extraSystemSettings) => {
           let newReportString = reportCapLinks + extraSystemSettings;
@@ -188,6 +188,7 @@ let submitCommand = {
     config.channels.canaryChannel,
     config.channels.androidChannel,
     config.channels.linuxChannel
-  ]
+  ],
+  acceptFromDM: false
 }
 module.exports = submitCommand;

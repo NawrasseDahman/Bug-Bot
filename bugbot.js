@@ -100,12 +100,12 @@ bot.on('messageCreate', (msg) => {
 
   let userTag = msg.author.username + "#" + msg.author.discriminator;
   let userID = msg.author.id;
+  let channelID = msg.channel.id;
+  let thisMember = msg.member;
 
     if(command.match(/^!/)) {
 
       let matchingCommand = commandList.find(command);
-      let channelID = msg.channel.id;
-      let thisMember = msg.member;
 
       if(!msg.channel.guild) {
         if(matchingCommand.acceptFromDM === true) {
@@ -132,6 +132,7 @@ bot.on('messageCreate', (msg) => {
       }
     }else {
       if(!!msg.channel.guild) {
+        let isRightChannel = channelID === config.channels.queueChannel || channelID === config.channels.iosChannel || channelID === config.channels.linuxChannel || channelID === config.channels.androidChannel || channelID === config.channels.canaryChannel;
         let isNotMod = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
         let isNotBot = userID !== config.botID;
 
@@ -154,7 +155,7 @@ function delMsgInReportingChannel(channelID, userID) {
   delMsgCooldown = true;
   setTimeout(function () {
     delMsgCooldown = false;
-  }, 5000);
+  }, 8000);
 }
 
 bot.connect();

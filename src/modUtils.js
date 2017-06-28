@@ -15,7 +15,7 @@ function getBug (bot, channelID, userID, command, msg, db) {
       return;
     }
   } else {
-    receivedMessage = userID; // which is the key in this case
+    receivedMessage = userID; // if denied report, this is the key
   }
 
   db.get("SELECT * FROM reports WHERE id = ?", [receivedMessage], function(error, reportInfo) {
@@ -36,20 +36,36 @@ function getBug (bot, channelID, userID, command, msg, db) {
       let stance;
       let getRepro = reportRepro.map(function(everyRepro) {
         if(everyRepro.stance === "approve") {
-          stance = ":white_check_mark:";
+          stance = "<:greenTick:" + config.emotes.greenTick + ">";
         } else {
-          stance = ":x:";
+          stance = "<:redTick:" + config.emotes.redTick + ">";
         }
-        return stance + " | " + utils.cleanUserTag(everyRepro.userTag) + "(" + everyRepro.userID + ") => `" + everyRepro.info + "`";
+        return stance + " **" + utils.cleanUserTag(everyRepro.userTag) + "**(`" + everyRepro.userID + "`): `" + everyRepro.info + "`";
       });
 
       let trelloURL = "";
       if(!!reportInfo.trelloURL) {
-        trelloURL = "<https://trello.com/c/" + reportInfo.trelloURL + ">";
+        trelloURL = "- <https://trello.com/c/" + reportInfo.trelloURL + ">";
+      }
+
+      let originLocation;
+      switch (reportInfo.cardID) {
+        case config.cards.canaryCard:
+          originLocation = config.channels.canaryChannel;
+          break;
+        case config.cards.linuxCard:
+          originLocation = config.channels.linuxChannel;
+          break;
+        case config.cards.iosCard:
+          originLocation = config.channels.iosChannel;
+          break;
+        case config.cards.androidCard:
+          originLocation = config.channels.androidChannel;
+          break;
       }
 
       let queueReportString = `\n**Short description:** ${reportInfo.header}\n**Steps to reproduce:** ${stepsToRepro}\n**Expected result:** ${expectedResult}\n**Actual result:** ${actualResult}\n**Client settings:** ${clientSetting}\n**System settings:** ${sysSettings}`;
-      let messageToSend = `───────────────────────\n**${utils.cleanUserTag(reportInfo.userTag)}** Reported:\n${queueReportString}\n\n - ${getRepro.join('\n - ')}\n**#${receivedMessage}** - ${trelloURL}`;
+      let messageToSend = `───────────────────────\n<#${originLocation}>: **#${receivedMessage}** ${trelloURL}\n**${utils.cleanUserTag(reportInfo.userTag)}** Reported:\n${queueReportString}\n\n - ${getRepro.join('\n  ')}`;
 
       if(!!command) {
         bot.getDMChannel(userID).then((getID) => {
@@ -57,7 +73,7 @@ function getBug (bot, channelID, userID, command, msg, db) {
           bot.deleteMessage(channelID, msg.id).catch(() => {});
         }).catch((error) => {console.log("getBug ERR:\n" + error);});
       } else {
-        bot.createMessage(channelID, messageToSend).catch((err) => {console.log("deniedBug  | createMsg\n" + err);});
+        bot.createMessage(channelID, messageToSend).catch((err) => {console.log("deniedBug | createMsg\n" + err);});
       }
     });
   });

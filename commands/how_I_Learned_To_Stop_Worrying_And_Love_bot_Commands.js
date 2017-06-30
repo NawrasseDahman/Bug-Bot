@@ -29,10 +29,11 @@ let fun = {
           utils.botReply(bot, userID, channelID, "wow! Calm down there, no need to take on more than you can chew! (one fight at the time)", command, msg.id, false);
           return;
         }
-
-        let strings = [", but they tripped over a rock and fell in the ocean", ", but they hurt themselves in confusion", ". SHORYUKEN!", ". HADOUKEN!", ". KA-POW!", " with a pillow", " with a large fish", ", but they stumbled over their shoe laces", ", but they miss", " with a burnt piece of toast", ", but it wasn't every effective..."];
+        let userName = msg.author.username;
+        let mention = msg.mentions[0].id;
+        let strings = [", but instead slipped on some jam and fell right into Dabbit, who is not pleased.", "with a transformer.", ", but creates a black hole and gets sucked in.", "with a poutine.", ", but they slipped on a banana peel", "and in the end, the only victor was the coffin maker.", ", and what a fight it is!  Whoa mama!", ", with two thousand blades!", ", but he fell into a conveniently placed manhole!", ", but they tripped over a rock and fell in the ocean", ", but they hurt themselves in confusion", ". SHORYUKEN!", ". HADOUKEN!", ". KA-POW!", " with a pillow", " with a large fish", ", but they stumbled over their shoelaces", ", but they missed", " with a burnt piece of toast", ", but it wasn't every effective"];
         let randomNumber = Math.floor((Math.random() * strings.length));
-        bot.createMessage(channelID, msg.author.username + " is fighting <@" + msg.mentions[0].id + ">" + strings[randomNumber]);
+        bot.createMessage(channelID, userName + " is fighting <@" + mention + ">" + strings[randomNumber]);
         break;
 
     }

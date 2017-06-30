@@ -8,7 +8,7 @@ function queueRepro(bot, trello, db, channelID, reportKey, key, report) {
   let emoji = "\n<:greenTick:" + config.emotes.greenTick + "> ";
   let reproduction = "Can reproduce.";
   db.each("SELECT userTag, info FROM reportQueueInfo WHERE stance = 'approve' AND id = ?", [key], function(error, data) {
-    delayTime += 2000;
+    delayTime += 5000;
     setTimeout(function() {
       reproSetup(bot, null, channelID, null, trello, db, data.info, reportKey, emoji, reproduction, data.userTag, null, report);
     }, delayTime);

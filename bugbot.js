@@ -83,7 +83,7 @@ function checkIfDM(command) {
 
 bot.on('guildMemberUpdate', (guild, member, oldMember) => {
   if(!!oldMember && (oldMember.roles.indexOf(config.roles.hunterRole) <= -1 && member.roles.indexOf(config.roles.hunterRole) > -1)){
-    bot.createMessage(config.channels.bugHunterChannel, 'Welcome <@' + member.user.id + '> to the Bug Hunters™!');
+    bot.createMessage(config.channels.bugHunterChannel, 'Welcome <@' + member.user.id + '> to the Bug Hunters:tm:!');
   }else if(!oldMember) {
     console.log("guildMemberUpdate failed " + oldMember);
   }
@@ -121,6 +121,12 @@ bot.on('messageCreate', (msg) => {
       if(userHasAuthorityForCommand(thisMember, matchingCommand)) {
         //check for channel
         if(correctChannelIsBeingUsed(msg.channel, matchingCommand)){
+          if(!userTag) {
+            let thisDate = new Date();
+            let cTime = dateFormat(thisDate, "UTC:mm-dd-yyyy-HH-MM");
+            console.log(`${cTime}\n${userTag} ${command}`);
+          }
+
           matchingCommand.execute(bot, channelID, userTag, userID, command, msg, trello, db);
         } else {
           //Tell the user they're posting the command in the wrong channel?

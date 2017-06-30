@@ -12,7 +12,6 @@ let revoke = {
       utils.botReply(bot, userID, channelID, "you seem to have dropped your key, mind picking it up and giving it to me?", command, msg.id);
       return;
     }
-
     let key = splitMsg[0];
 
     db.get("SELECT reportString, canRepro, cantRepro, reportMsgID, reportStatus FROM reports WHERE id = ?", [key], function(err, reportInfo) {
@@ -51,7 +50,6 @@ let revoke = {
 
         //remove from reportQueueInfo and chat message
         //update reports with new can/trepro
-
         let replace = split.replace(newRegex, "");
         let newMsg = oldReport[0] + "Report ID: **" + key + "**" + replace;
         db.run("DELETE FROM reportQueueInfo WHERE userID = ? AND id = ?", [userID, key], function(err, reply) {

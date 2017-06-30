@@ -4,6 +4,7 @@ const utils = require("./utils");
 const sections = require('./getSections');
 const reproUtils = require('./reproUtils');
 const attachUtils = require('./attachUtils');
+const dateFormat = require('dateformat');
 
 function addReportTrello(bot, key, db, trello) { // add report to trello
   db.serialize(function(){
@@ -130,6 +131,14 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
     let newRegex = new RegExp(pattern, "ig");
 
     let trelloDesc = urlData.desc;
+
+    if(!trelloDesc) {
+    let time = new Date();
+    let ptime= dateFormat(time, "UTC:mm-dd-yyyy-HH-MM");
+      console.log(`${ptime}\n${userTag} ${trelloDesc}`);
+      return utils.botReply(bot, userID, channelID, "Something went wrong, please try again! Also scream at Logiz", command, msgID, false);
+    }
+
     let editTrelloString = trelloDesc.replace(newRegex, utils.toTitleCase(editSection) + ":\n" + newContent);
 
     var cardUpdated = function(error, data){

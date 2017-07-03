@@ -65,7 +65,7 @@ function getBug (bot, channelID, userID, command, msg, db) {
       }
 
       let queueReportString = `\n**Short description:** ${reportInfo.header}\n**Steps to reproduce:** ${stepsToRepro}\n**Expected result:** ${expectedResult}\n**Actual result:** ${actualResult}\n**Client settings:** ${clientSetting}\n**System settings:** ${sysSettings}`;
-      let messageToSend = `───────────────────────\n<#${originLocation}>: **#${receivedMessage}** ${trelloURL}\n**${utils.cleanUserTag(reportInfo.userTag)}** Reported:\n${queueReportString}\n\n - ${getRepro.join('\n  ')}`;
+      let messageToSend = `───────────────────────\n<#${originLocation}>: **#${receivedMessage}** ${trelloURL}\n**${utils.cleanUserTag(reportInfo.userTag)}** Reported:\n${queueReportString}\n\n ${getRepro.join('\n  ')}`;
 
       if(!!command) {
         bot.getDMChannel(userID).then((getID) => {

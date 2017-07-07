@@ -6,7 +6,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log|!getmsg|!embed|!roles/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -82,6 +82,30 @@ let modCommands = {
               bot.createMessage(channelID, null, {file: bufferString, name: "log-" + thisCycle + ".log"}).catch((error) => {console.log(error);});
             }
           }
+          break;
+        case "!getmsg":
+          bot.getMessage(channelID, recievedMessage).then((info) => {
+            console.log(info);
+          });
+        break;
+
+        case "!embed":
+
+              //  embedStreamers = {title: "QubeTubers Twitch Team", description: "Visit <https://www.twitch.tv/team/qubetubers> to get in on the fun!", color: 7506394, fields: [{name: 'No channels are currently live, check back again later!', value: ' '}]};
+              //  bot.createMessage(config.editChannelID, {content: " ", embed: embedStreamers}).then(m_msg => {
+              //    client.set("QTEditChannelTextIDTest", m_msg.id);
+              //  });
+          let report = {author: {name: userTag, icon_url: msg.author.avatarURL}, title: "<:android:332598172645982221> Android:", description: "**Short Description:**  This is a test report\n**Steps to Reproduce:** \nStep 1: Install app \nStep 2: Launch app \nStep 3: Observe\n**Expected Result:** App starts\n**Actual Result:** Crash\n**Client settings:** These things\n**System settings:** Potato 6000\n", color: 7506394, footer: {text: "Report ID: #1000"}, fields:
+          [{name: "Approvals:", value: "<:greenTick:301528515361243136> This Potato#1234: Can Repro Android 6.0.1\n<:greenTick:301528515361243136> Dabbit Prime#0001: Can Repro Android 8", inline: true},
+          {name: "Denials:", value: "\n<:redTick:301528514832760833> Logiz#9321: Can't repro"}, {name: "Attachments:", value: "--list of attachments--"},
+          {name: "Notes:", value: ":pencil: Logiz#9321: I am the biggest potato in this farm!"}]};
+          bot.createMessage(channelID, {content: " ", embed: report});
+          break;
+        case "!roles":
+          let roles = msg.member.guild.roles;
+          let rolesList = roles.map(function(role){
+            return role.name + ": '" + role.id + "'"; });
+          bot.createMessage(channelID, "```js\n" + rolesList.join(",\n") + "```").catch((err) => {console.log(err);});
           break;
       }
   },

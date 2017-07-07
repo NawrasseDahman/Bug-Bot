@@ -91,7 +91,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
         roles: allRoles
       }).then(() => {
         utils.botReply(bot, userID, config.channels.charterChannel, ", congratulations on your bug getting approved! You're almost a full-fledged Bug Hunter:tm:!  The last step is you need to read and agree to the rules of this Charter by DM'ing the Secret Phrase to me.  The secret phrase can only be found by reading the Charter!", null, null, false, true);
-        bot.createMessage(config.channels.modLogChannel, `${userTag} was made a <rolename> because of ${shortUrl}`);
+        bot.createMessage(config.channels.modLogChannel, `**${userTag}** was given the Initiate role because of ${shortUrl}`);
       });
 
     }

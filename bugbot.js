@@ -81,14 +81,6 @@ function checkIfDM(command) {
   }
 }
 
-bot.on('guildMemberUpdate', (guild, member, oldMember) => {
-  if(!!oldMember && (oldMember.roles.indexOf(config.roles.hunterRole) <= -1 && member.roles.indexOf(config.roles.hunterRole) > -1)){
-    bot.createMessage(config.channels.bugHunterChannel, 'Welcome <@' + member.user.id + '> to the Bug Hunters:tm:!');
-  }else if(!oldMember) {
-    console.log("guildMemberUpdate failed " + oldMember);
-  }
-});
-
 let delMsgCooldown = false;
 
 bot.on('messageCreate', (msg) => {

@@ -142,11 +142,8 @@ bot.on('messageCreate', (msg) => {
         }
       }
     } else {
-      console.log(thisMember.roles.indexOf(config.roles.initiateRole) !== -1 && thisMember.roles.indexOf(config.roles.hunterRole) === -1);
       if(thisMember.roles.indexOf(config.roles.initiateRole) !== -1 && thisMember.roles.indexOf(config.roles.hunterRole) === -1) {
-        console.log(msg.content);
         if(msg.content.toLowerCase() === "dabbit is the best") {
-          console.log("dabdab");
           let getHunterRole = thisMember.roles;
           let indexOfInitiateRole = getHunterRole.indexOf(config.roles.initiateRole);
           getHunterRole.splice(indexOfInitiateRole, 1);

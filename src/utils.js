@@ -10,7 +10,7 @@ function delay (delayS) {
   }
 }
 
-function botReply (bot, userID, channelID, message, command, msgID, minute) {
+function botReply (bot, userID, channelID, message, command, msgID, minute, twoHours) {
   if(command === "!submit") {
     bot.createMessage(channelID, '<@' + userID + '> ' + message).then(delay(customConfig.maxDelay)).then((msgInfo) => {
       bot.deleteMessage(channelID, msgInfo.id).catch(() => {});
@@ -24,6 +24,12 @@ function botReply (bot, userID, channelID, message, command, msgID, minute) {
       bot.deleteMessage(channelID, msgID).catch(() => {});
     }).catch((error) => {
       console.log("#utils | botReply notSubmit - minute\n" + error);
+    });
+  } else if(twoHours === true) {
+    bot.createMessage(channelID, '<@' + userID + '>' + message).then(delay(customConfig.twoHours)).then((msgInfo) => {
+      bot.deleteMessage(channelID, msgInfo.id).catch(() => {});
+    }).catch((error) => {
+      console.log("#utils | botReply twoHours\n" + error);
     });
   } else {
     bot.createMessage(channelID, '<@' + userID + '> ' + message).then(delay(customConfig.delayInS)).then((msgInfo) => {
@@ -54,7 +60,7 @@ function preCleanInputText(inputText, checkIfRemove) {
       inputText.splice(indexNumb, 1);
     });
     inputText = inputText.join(' ');
-    
+
     return cleanInputText(inputText, arrOfURLs, checkIfRemove);
   } else {
     return cleanInputText(inputText, null, checkIfRemove);
@@ -79,11 +85,11 @@ function cleanInputText(inputText, arrOfURLs, checkIfRemove) {
 }
 
 function cleanUserTag(userTag) {
-  return userTag.replace(/[\*\`\~\_]/gi, "\\$&");
+  return userTag.replace(/[\*\`\~\_\ˋ]/gi, "\\$&");
 }
 
 function cleanUserTagRegex(userTag) {
-  return userTag.replace(/[\[\\\^\$\.\|\?\*\+\(\)\{\}\]\~\_\`]/gi, "\\\\$&");
+  return userTag.replace(/[\[\\\^\$\.\|\?\*\+\(\)\{\}\]\~\_\`]/gi, "\\\$&");
 }
 
 function reportTracking (bot, channelID, userTag, userID, command, msg, trello, db) {

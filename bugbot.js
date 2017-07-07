@@ -103,54 +103,78 @@ bot.on('messageCreate', (msg) => {
   let channelID = msg.channel.id;
   let thisMember = msg.member;
 
-    if(command.match(/^!/)) {
+  if(!msg.channel.guild) {
+    let getGuild = bot.guilds.get(config.DTserverID);
+    let getMember = getGuild.members.get((msg.author.id));
+        thisMember = getMember;
+  }
 
-      let matchingCommand = commandList.find(command);
+  if(command.match(/^!/)) {
 
-      if(!msg.channel.guild) {
-        if(matchingCommand.acceptFromDM === true) {
-          let getGuild = bot.guilds.get(config.DTserverID);
-          let getMember = getGuild.members.get((msg.author.id));
-              thisMember = getMember;
-        } else {
-          return;
+    let matchingCommand = commandList.find(command);
+
+    if(!msg.channel.guild && matchingCommand.acceptFromDM !== true) {
+      return;
+    }
+
+    //check for roles
+    if(userHasAuthorityForCommand(thisMember, matchingCommand)) {
+      //check for channel
+      if(correctChannelIsBeingUsed(msg.channel, matchingCommand)){
+        if(!userTag) {
+          let thisDate = new Date();
+          let cTime = dateFormat(thisDate, "UTC:mm-dd-yyyy-HH-MM");
+          console.log(`${cTime}\n${userTag} ${command}`);
         }
-      }
 
-      //check for roles
-      if(userHasAuthorityForCommand(thisMember, matchingCommand)) {
-        //check for channel
-        if(correctChannelIsBeingUsed(msg.channel, matchingCommand)){
-          if(!userTag) {
-            let thisDate = new Date();
-            let cTime = dateFormat(thisDate, "UTC:mm-dd-yyyy-HH-MM");
-            console.log(`${cTime}\n${userTag} ${command}`);
-          }
-
-          matchingCommand.execute(bot, channelID, userTag, userID, command, msg, trello, db);
-        } else {
-          //Tell the user they're posting the command in the wrong channel?
-        }
-      }else {
-        // Add channel check
-        //Tell the user they don't have permission for that command
-        utils.botReply(bot, userID, channelID, "you do not have access to that command", command, msg.id, true);
+        matchingCommand.execute(bot, channelID, userTag, userID, command, msg, trello, db);
+      } else {
+        //Tell the user they're posting the command in the wrong channel?
       }
     }else {
-      if(!!msg.channel.guild) {
-        let isRightChannel = channelID === config.channels.queueChannel || channelID === config.channels.iosChannel || channelID === config.channels.linuxChannel || channelID === config.channels.androidChannel || channelID === config.channels.canaryChannel;
-        let isNotMod = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
-        let isNotBot = userID !== config.botID;
+      // Add channel check
+      //Tell the user they don't have permission for that command
+      utils.botReply(bot, userID, channelID, "you do not have access to that command", command, msg.id, true);
+    }
+  }else {
+    if(!!msg.channel.guild) {
+      let isRightChannel = channelID === config.channels.queueChannel || channelID === config.channels.iosChannel || channelID === config.channels.linuxChannel || channelID === config.channels.androidChannel || channelID === config.channels.canaryChannel;
+      let isNotMod = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
+      let isNotBot = userID !== config.botID;
 
-        if(isNotBot && isNotMod === -1 && isRightChannel) {
-          //Delete and say commands only on delay
-          bot.deleteMessage(channelID, msg.id);
-          if(delMsgCooldown === false){
-            delMsgInReportingChannel(channelID, userID);
-          }
+      if(isNotBot && isNotMod === -1 && isRightChannel) {
+        //Delete and say commands only on delay
+        bot.deleteMessage(channelID, msg.id);
+        if(delMsgCooldown === false){
+          delMsgInReportingChannel(channelID, userID);
+        }
+      }
+    } else {
+      if(thisMember.roles.indexOf(config.roles.initiateRole) !== -1 && thisMember.roles.indexOf(config.roles.hunterRole) === -1) {
+        if(msg.content.toLowerCase() === "Dabbit is the best") {
+          let getHunterRole = thisMember.roles;
+          let indexOfInitiateRole = getHunterRole.indexOf(config.roles.initiateRole);
+          getHunterRole.splice(indexOfInitiateRole, 1);
+          getHunterRole.push(config.roles.hunterRole);
+          bot.editGuildMember(config.DTserverID, userID, {
+            roles: getHunterRole
+          }).then(() => {
+            bot.getMessages(config.channels.charterChannel).then((allMsgs) => {
+              let thisMsg = allMsgs.find(function(msgs) {
+                return msgs.author.id === config.botID && msgs.content.indexOf(`<@${userID}>`) > -1;
+              });
+              if(!!thisMsg) {
+                bot.deleteMessage(config.channels.charterChannel, thisMsg.id).catch(() => {});
+              }
+            });
+
+            bot.createMessage(config.channels.bugHunterChannel, `Welcome <@${userID}> to the Bug Hunters:tm:!`);
+            bot.createMessage(config.channels.modLogChannel, `${userTag} just did the do and became a Bug Hunter:tm:!`);
+          });
         }
       }
     }
+  }
 });
 
 // Tell the user that they can only post commands in the reporting channel

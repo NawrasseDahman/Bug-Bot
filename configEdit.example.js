@@ -6,6 +6,7 @@ var customConfig = {
   delayInS: 6,          // in seconds
   minuteDelay: 60,      // 60 seconds
   maxDelay: 120,        // submit message delete timer
+  twoHours: 7200,       // charter timer / two hours
   backupTimer: 6,       // in hours (for example 24 hours);
 
   approveAttempts: 3,   // number of approvals before the bug is approved

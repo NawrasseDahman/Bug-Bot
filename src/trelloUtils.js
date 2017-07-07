@@ -83,15 +83,24 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
     if(!userInfo) {
       return;
     }
-    if(userInfo.roles.indexOf(config.roles.hunterRole) === -1 && config.DTserverID === "197038439483310086"){
-      bot.createMessage(config.channels.modLogChannel, ":balloon: <@110813477156720640> <@" + userID + "> needs a rank");  // Ping dabbit for rank
+    if(userInfo.roles.indexOf(config.roles.initiateRole) === -1){
+
+      let allRoles = userInfo.roles;
+      allRoles.push(config.roles.initiateRole);
+      bot.editGuildMember(config.DTserverID, userID, {
+        roles: allRoles
+      }).then(() => {
+        utils.botReply(bot, userID, config.channels.charterChannel, ", congratulations on your bug getting approved! You're almost a full-fledged Bug Hunter:tm:!  The last step is you need to read and agree to the rules of this Charter by DM'ing the Secret Phrase to me.  The secret phrase can only be found by reading the Charter!", null, null, false, true);
+        bot.createMessage(config.channels.modLogChannel, `${userTag} was made a <rolename> because of ${shortUrl}`);
+      });
+
     }
     bot.getDMChannel(userID).then((DMInfo) => {
       bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {
         bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** approved. <" + shortUrl + ">");
       });
     }).catch((err) => {
-      console.log("trelloUtils gerUserInfo DM\n" + err);
+      console.log("trelloUtils getUserInfo DM\n" + err);
     });
     loopGetUserInfo = 0;
   } else if(loopGetUserInfo >= 5) {

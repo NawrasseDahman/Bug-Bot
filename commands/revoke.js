@@ -32,7 +32,7 @@ let revoke = {
         let split = oldReport[1];
         let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
         let newRegex = new RegExp(pattern, "i");
-
+        
         let matchTick = split.match(newRegex);
         if(!matchTick) {
           //reply user has not approved or denied this report

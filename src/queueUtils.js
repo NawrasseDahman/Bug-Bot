@@ -52,7 +52,7 @@ function queueReport (bot, userTag, userID, channelID, db, msg, reportCapLinks, 
       } else if(channelID === config.channels.linuxChannel) {
         cardID = config.cards.linuxCard;
       }
-
+      
       bot.createMessage(config.channels.queueChannel, "───────────────────\n<#" + channelID + "> **" + utils.cleanUserTag(userTag) + "** Reported:\n" + queueReportString + "\n\nThe report above needs to be approved.\nReport ID: **" + reportID + "**\n").then((qMsg) => {
         let queueMsgID = qMsg.id;
 

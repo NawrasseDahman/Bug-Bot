@@ -11,7 +11,8 @@ var config = {
     bugHunterChannel: '217764019661045761',   //bug hunter text Channel
     queueChannel: '253923313460445184',       //bug approval text channel
     deniedBugChannel: '327914056591736834',   //denied bug text Channel
-    allChannels: 'allChannels'                //fake channel for everyone
+    allChannels: 'allChannels',               //fake channel for everyone
+    charterChannel: '332901248787546114'      //Bug hunter charter channel
   },
 
   roles: {
@@ -22,7 +23,8 @@ var config = {
     iosTestflightRole: '234838392464998402',  //ios testflight role
     linuxTesterRole: '278229255169638410',    //linux role
     trelloModRole: '197400761104203776',      //trello mod role
-    everybodyRole: 'everybody'                //fake role for everyone
+    everybodyRole: 'everybody',               //fake role for everyone
+    initiateRole: '332901266659475466'         //Bug hunter charter role
   },
 
   cards: {

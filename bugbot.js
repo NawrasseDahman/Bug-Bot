@@ -169,7 +169,7 @@ bot.on('messageCreate', (msg) => {
             });
 
             bot.createMessage(config.channels.bugHunterChannel, `Welcome <@${userID}> to the Bug Hunters:tm:!`);
-            bot.createMessage(config.channels.modLogChannel, `**${userTag}** just did the do and became a Bug Hunter:tm:!`);
+            bot.createMessage(config.channels.modLogChannel, `<:evilDabbit:233327051686412288> **${userTag}** just did the do and became a Bug Hunter:tm:!`);
           });
         }
       }

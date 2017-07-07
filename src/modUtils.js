@@ -87,21 +87,8 @@ function getUser (bot, channelID, userTag, userID, command, msg, trello, db) {
 
 }
 
-function testFunction (bot, channelID) {
-  let thisThing = ['Happy Birthday to You', 'Happy Birthday to You', 'Happy Birthday Dear <@110813477156720640>', 'Happy Birthday to You.', '** **', 'From good friends and true,', 'From old friends and new,', 'May good luck go with you,', 'And lots of bugs too! :tada: :tada: '];
-
-  let timer = 0;
-
-  thisThing.forEach(function(elm) {
-    setTimeout(function() {
-      bot.createMessage(channelID, elm);
-    }, timer += 1500);
-  })
-}
-
 module.exports = {
   getBug: getBug,
   getStats: getStats,
-  getUser: getUser,
-  testFunction: testFunction
+  getUser: getUser
 }

@@ -6,7 +6,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log|!thing/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -83,10 +83,6 @@ let modCommands = {
             }
           }
           break;
-        case '!thing':
-          if(userID === "84815422746005504") {
-            modUtils.testFunction(bot, channelID);
-          }
       }
   },
   roles: [

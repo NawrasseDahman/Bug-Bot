@@ -83,7 +83,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
     if(!userInfo) {
       return;
     }
-    if(userInfo.roles.indexOf(config.roles.initiateRole) === -1){
+    if(userInfo.roles.indexOf(config.roles.initiateRole) === -1 && userInfo.roles.indexOf(config.roles.hunterRole) === -1){
 
       let allRoles = userInfo.roles;
       allRoles.push(config.roles.initiateRole);

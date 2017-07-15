@@ -115,8 +115,8 @@ bot.on('messageCreate', (msg) => {
       if(correctChannelIsBeingUsed(msg.channel, matchingCommand)){
         if(!userTag) {
           let thisDate = new Date();
-          let cTime = dateFormat(thisDate, "UTC:mm-dd-yyyy-HH-MM");
-          console.log(`${cTime}\n${userTag} ${command}`);
+          let cTime = dateFormat(thisDate, "GMT:mm-dd-yyyy-HH-MM");
+          console.log(`${cTime} userTag - command\n${userTag} ${command}`);
         }
 
         matchingCommand.execute(bot, channelID, userTag, userID, command, msg, trello, db);

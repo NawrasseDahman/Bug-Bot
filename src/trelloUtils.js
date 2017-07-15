@@ -142,9 +142,9 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
     let trelloDesc = urlData.desc;
 
     if(!trelloDesc) {
-    let time = new Date();
-    let ptime= dateFormat(time, "UTC:mm-dd-yyyy-HH-MM");
-      console.log(`${ptime}\n${userTag} ${trelloDesc}`);
+      let time = new Date();
+      let ptime= dateFormat(time, "GMT:mm-dd-yyyy-HH-MM");
+      console.log(`${ptime} trello Desc\n${userTag} ${trelloDesc}`);
       return utils.botReply(bot, userID, channelID, "Something went wrong, please try again! Also scream at Logiz", command, msgID, false);
     }
 

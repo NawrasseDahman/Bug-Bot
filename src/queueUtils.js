@@ -20,7 +20,7 @@ function deniedReport(bot, msg, db, key, reportInfo) {
           bot.createMessage(DMInfo.id, "Hi " + DMInfo.recipient.username + ", unfortunately the bug you reported earlier: `" + reportInfo.header + "` was denied because:\n- `" + DBReportInfoArray.join('`\n- `') +
           "`\n\nYou should try adding as much information as you can when you resubmit it. Here are some helpful tips:\n- Does your bug only happen on a specific version of the operating system?\n- Does your bug only happen on a specific device?\n- Try to be as specific as possible. Generalities like \"it glitches\" aren't helpful and lead to confusion.\n- Try to keep each repro step to a single action.\n\nThank you though for the report and we look forward to your next one! :thumbsup:\n\nBelow you'll find your original submit message:\n```\n!submit " +
           reportInfo.header + " | " + reportInfo.reportString + "```").catch(() => {
-            bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** denied.");
+            bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(allInfo.userTag) + "**. Report **#" + key + "** denied.");
           });
             modUtils.getBug(bot, config.channels.deniedBugChannel, key, null, null, db);
         });
@@ -52,7 +52,7 @@ function queueReport (bot, userTag, userID, channelID, db, msg, reportCapLinks, 
       } else if(channelID === config.channels.linuxChannel) {
         cardID = config.cards.linuxCard;
       }
-      
+
       bot.createMessage(config.channels.queueChannel, "───────────────────\n<#" + channelID + "> **" + utils.cleanUserTag(userTag) + "** Reported:\n" + queueReportString + "\n\nThe report above needs to be approved.\nReport ID: **" + reportID + "**\n").then((qMsg) => {
         let queueMsgID = qMsg.id;
 

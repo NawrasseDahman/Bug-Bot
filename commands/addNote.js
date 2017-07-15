@@ -43,9 +43,9 @@ let addNote = {
 
     note = utils.preCleanInputText(note, false);
 
-    db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key, function(error, reportInfo) {
+    db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key + " OR trelloURL = " + key, function(error, reportInfo) {
       if(!!error) {
-        console.log("dbGetErr\n" + error);
+        console.log("addNote | dbGetErr\n" + error);
       }
 
       let trelloURL;

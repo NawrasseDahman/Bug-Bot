@@ -53,7 +53,7 @@ let approveDeny = {
         utils.botReply(bot, userID, channelID, "this report has already been moved", command, msg.id, false);
         return;
       }
-      
+
       let cleanContent = utils.preCleanInputText(contentMessage[2], false);
       let whichClient = cleanContent.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
       let ADcontent = cleanContent;
@@ -81,7 +81,7 @@ let approveDeny = {
           }
           if(!!usrSys){
             let info = cleanContent;
-            ADcontent = info.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, " " + usrSys[system]);
+            ADcontent = info.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, usrSys[system]);
             addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
           } else {
             utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!storeinfo " + whichClient[1] + " | system info`", command, msg.id, false);

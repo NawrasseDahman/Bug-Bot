@@ -29,7 +29,7 @@ bot.on("ready", () => {
   db.run("CREATE TABLE IF NOT EXISTS reports (id INTEGER, header TEXT, reportString TEXT, userID TEXT, userTag TEXT, cardID TEXT, reportStatus TEXT, trelloURL TEXT, canRepro INTEGER, cantRepro INTEGER, reportMsgID TEXT, timestamp TEXT)");
   db.run("CREATE TABLE IF NOT EXISTS reportQueueInfo (id INTEGER, userID TEXT, userTag TEXT, info TEXT, stance TEXT)");
   db.run("CREATE TABLE IF NOT EXISTS reportAttachments (id INTEGER, userID TEXT, userTag TEXT, attachment TEXT)");
-  db.run("CREATE TABLE IF NOT EXISTS users (userID TEXT, xp INTEGER, windows TEXT, ios TEXT, android TEXT, macOS TEXT, linux TEXT, reproDailyNumb INTEGER, ADdailyNumb INTEGER, hugDailyNumb INTEGER, trackReport BOOLEAN)");
+  db.run("CREATE TABLE IF NOT EXISTS users (userID TEXT, xp INTEGER, windows TEXT, ios TEXT, android TEXT, macOS TEXT, linux TEXT, reproDailyNumb INTEGER, ADdailyNumb INTEGER, hugDailyNumb INTEGER, trackReport BOOLEAN, bhjoindate TEXT)");
   bot.createMessage(config.channels.modLogChannel, "I heard there are bugs that needs reporting. I'm online and ready to rumble!");
 
   if(reconnect === false) {
@@ -51,6 +51,7 @@ commandList.add('reproductions');
 commandList.add('revoke');
 commandList.add('storeInfo');
 commandList.add('submit');
+//commandList.add('utilCommands');
 
 function userHasRole(user, role) {
   return user.roles.some(memberRole => memberRole === role);
@@ -143,7 +144,7 @@ bot.on('messageCreate', (msg) => {
       }
     } else {
       if(thisMember.roles.indexOf(config.roles.initiateRole) !== -1 && thisMember.roles.indexOf(config.roles.hunterRole) === -1) {
-        if(msg.content.toLowerCase() === "dabbit is the best") {
+        if(msg.content.toLowerCase() === customConfig.BHphrase) {
           let getHunterRole = thisMember.roles;
           let indexOfInitiateRole = getHunterRole.indexOf(config.roles.initiateRole);
           getHunterRole.splice(indexOfInitiateRole, 1);
@@ -159,7 +160,19 @@ bot.on('messageCreate', (msg) => {
                 bot.deleteMessage(config.channels.charterChannel, thisMsg.id).catch(() => {});
               }
             });
+            /*
+            db.get('SELECT userID FROM users WHEN userID = ?', [userID], function(err, reply) {
+              if(!!err) {
+                console.log("BH user add\n" + err);
+              }
 
+              if(!!reply) {
+                db.run('UPDATE users SET bhjoindate = datetime() WHERE userID = ?', [userID]);
+              } else {
+                db.run('INSERT INTO users (userID, bhjoindate) VALUES(?, datetime())', [userID]);
+              }
+
+            }); */
             bot.createMessage(config.channels.bugHunterChannel, `Welcome <@${userID}> to the Bug Hunters:tm:!`);
             bot.createMessage(config.channels.modLogChannel, `<:evilDabbit:233327051686412288> **${userTag}** just did the do and became a Bug Hunter:tm:!`);
           });

@@ -127,7 +127,9 @@ bot.on('messageCreate', (msg) => {
     }else {
       // Add channel check
       //Tell the user they don't have permission for that command
-      utils.botReply(bot, userID, channelID, "you do not have access to that command", command, msg.id, true);
+      if(command === "!attach") {
+        utils.botReply(bot, userID, channelID, "you do not have access to that command", command, msg.id, true);
+      }
     }
   }else {
     if(!!msg.channel.guild) {

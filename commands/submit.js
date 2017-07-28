@@ -75,9 +75,14 @@ function checkSectionsExist(userID, report, channelID, sectionNames, db) {
   return promise;
 }
 
+let map = new Map();
 let submitCommand = {
   pattern: /!submit|!sumbit/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
+    if(map.has(userID)) {
+      return;
+    }
+
     let msgID = msg.id;
     var messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -112,7 +117,7 @@ let submitCommand = {
           sectionNames.add(matches[1].toLowerCase());
         }
 
-        reportCapLinks = utils.preCleanInputText(reportCapLinks, false);
+        reportCapLinks = utils.cleanText(reportCapLinks, false);
 
         checkSectionsExist(userID, reportCapLinks, channelID, sectionNames, db).then((extraSystemSettings) => {
           let newReportString = reportCapLinks + extraSystemSettings;
@@ -173,6 +178,11 @@ let submitCommand = {
         }).catch((errorMessage)=>{
           utils.botReply(bot, userID, channelID, errorMessage, command, msgID, true);
         });
+
+        map.set(userID);
+        setTimeout(function() {
+          map.delete(userID);
+        }, 30000);
 
         break;
       case "!sumbit":

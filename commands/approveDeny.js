@@ -54,7 +54,7 @@ let approveDeny = {
         return;
       }
 
-      let cleanContent = utils.preCleanInputText(contentMessage[2], false);
+      let cleanContent = utils.cleanText(contentMessage[2], false);
       let whichClient = cleanContent.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
       let ADcontent = cleanContent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing

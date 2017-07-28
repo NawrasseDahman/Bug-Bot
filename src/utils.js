@@ -45,47 +45,46 @@ function toTitleCase(editString) {
   return editString.replace(/\w\S*/, function(text) { return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();});
 }
 
-function preCleanInputText(inputText, checkIfRemove) {
-  //needs to check for several links
-  //remove links and remember their position
-  let checkForURLs = inputText.match(/([--:\w?@%&+~#=]*\.[a-z]{2,4}\/{0,2})(?:(?:[?&](?:\w+)=(?:\w+))+|[--:\w?@%&+~#=]+)?/gi);
-  if(!!checkForURLs) {
-    //map each URL and their position
-    // URL: '<url>', pos: <#>
-    inputText = inputText.split(' ');
-    let arrOfURLs = [];
-    checkForURLs.forEach(function(url) {
-      let indexNumb = inputText.indexOf(url);
-      arrOfURLs.push({'url': url, 'index': indexNumb});
-      inputText.splice(indexNumb, 1);
-    });
-    inputText = inputText.join(' ');
+function stringSplice(oldString, start, length, newString) {
+	return oldString.slice(0, start) + newString + oldString.slice(start + length);
+}
+let identID = 0;
 
-    return cleanInputText(inputText, arrOfURLs, checkIfRemove);
-  } else {
-    return cleanInputText(inputText, null, checkIfRemove);
+function getURLs(inputText, currentMatches) {
+
+  currentMatches = currentMatches || {matches: {}};
+  let match = /([--:\w?@%&+~#=]*\.[a-z]{2,4}\/{0,2}(?:[?&](?:\w+)=(?:\w+)+|[--:\w?@%&+~#=]+)?)/i.exec(inputText);
+
+  if(!!match) {
+  	let urlIdent = "$$URL" + ++identID + "$$";
+    currentMatches.text = stringSplice(inputText, match.index, match[0].length, urlIdent);
+    currentMatches.matches[urlIdent] = match[0];
+   currentMatches = getURLs(currentMatches.text, currentMatches);
   }
+
+  return currentMatches;
 }
 
-function cleanInputText(inputText, arrOfURLs, checkIfRemove) {
+function cleanText(txt, checkIfRemove) {
+
   let whatToDo = "\\$&";
   if(checkIfRemove) {
     whatToDo = "";
   }
-  inputText = inputText.replace(/[\*\`\~\_\ˋ]/gi, whatToDo);
 
-  if(!!arrOfURLs) { //add URLs back
-    inputText = inputText.split(' ');
-    arrOfURLs.map(function(info) {
-      inputText.splice(info.index, 0, info.url);
-    });
-    inputText = inputText.join(' ');
+  let ObjOfURLs = getURLs(txt);
+
+  let thisText = ObjOfURLs.text.replace(/[\*\`\~\_\ˋ]/gi, whatToDo);
+
+  for (let prop in ObjOfURLs.matches) {
+    thisText = thisText.replace(prop, ObjOfURLs.matches[prop]);
   }
-  return inputText;
+
+  return thisText;
 }
 
 function cleanUserTag(userTag) {
-  return userTag.replace(/[\*\`\~\_\ˋ]/gi, "\\$&");
+  return userTag.replace(/[\*\`\~\_\ˋ]/gi, "\$&");
 }
 
 function cleanUserTagRegex(userTag) {
@@ -119,5 +118,5 @@ module.exports = {
   cleanUserTag: cleanUserTag,
   cleanUserTagRegex: cleanUserTagRegex,
   reportTracking: reportTracking,
-  preCleanInputText: preCleanInputText
+  cleanText: cleanText
 };

@@ -41,7 +41,7 @@ let addNote = {
     let key = matchContent[1];
     let note = matchContent[2];
 
-    note = utils.preCleanInputText(note, false);
+    note = utils.cleanText(note, false);
 
     db.get("SELECT reportStatus, reportMsgID, trelloURL FROM reports WHERE id = " + key + " OR trelloURL = " + key, function(error, reportInfo) {
       if(!!error) {

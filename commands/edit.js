@@ -46,7 +46,7 @@ let edit = {
         return;
       }
 
-      let cleanNewContent = utils.preCleanInputText(newContent, false);
+      let cleanNewContent = utils.cleanText(newContent, false);
 
       if(!cleanNewContent) {
         utils.botReply(bot, userID, channelID, "you forgot to add your new content!", command, msg.id);

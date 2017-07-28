@@ -74,7 +74,7 @@ let storeSysInfo = {
       if(!!error){
         console.log(error);
       }
-      systemInfo = utils.preCleanInputText(systemInfo, true);
+      systemInfo = utils.cleanText(systemInfo, true);
 
       switch(whichOS.toLowerCase()) {
         case "windows":

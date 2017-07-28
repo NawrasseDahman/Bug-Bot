@@ -114,7 +114,7 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
           return;
         }
 
-        reproCnt = utils.preCleanInputText(reproCnt, false);
+        reproCnt = utils.cleanText(reproCnt, false);
 
         let whichClient = reproCnt.match(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i);
         let system;

@@ -73,6 +73,7 @@ function cleanText(txt, checkIfRemove) {
   }
 
   let ObjOfURLs = getURLs(txt);
+  if(!ObjOfURLs.text) return txt;
 
   let thisText = ObjOfURLs.text.replace(/[\*\`\~\_\ˋ]/gi, whatToDo);
 

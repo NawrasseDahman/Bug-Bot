@@ -23,7 +23,9 @@ bot.on('error', err => {
   let currentTime = dateFormat(newDate, "UTC:mm-dd-yyyy-HH-MM");
   console.log("BOT ERROR:\n" + err.stack);
 });
+
 let reconnect = false;
+
 bot.on("ready", () => {
   console.log('───────────────────────\nReady! PID: ' + process.pid);
   db.run("CREATE TABLE IF NOT EXISTS reports (id INTEGER, header TEXT, reportString TEXT, userID TEXT, userTag TEXT, cardID TEXT, reportStatus TEXT, trelloURL TEXT, canRepro INTEGER, cantRepro INTEGER, reportMsgID TEXT, timestamp TEXT)");

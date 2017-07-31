@@ -12,6 +12,7 @@ let modCommands = {
     messageSplit.shift();
     let recievedMessage = messageSplit.join(' ');
     let contentMessage = recievedMessage.match(/(\d*)\s*\|\s*([\s\S]*)/i);
+    let currentTime = new Date();
       switch (command.toLowerCase()) {
         case "!ping":
           utils.botReply(bot, userID, channelID, "Pong! <:greenTick:" + config.emotes.greenTick + ">", command, msg.id, false);
@@ -23,13 +24,12 @@ let modCommands = {
           break;
 
         case "!restart":
-          let currentTime = new Date();
-          let thisBackupTime = dateFormat(currentTime, "UTC:mm-dd-yyyy-HH-MM");
+          let backupFormattedTime = dateFormat(currentTime, "UTC:mm-dd-yyyy-HH-MM");
           let backupFile = fs.readFileSync('./data/data.sqlite');
 
-          bot.deleteMessage(channelID, msg.id).then(() => {
+          bot.createMessage(channelID, "Restarting...").then(() => {
             console.log("Restarting");
-            bot.createMessage(config.channels.modLogChannel, `:large_blue_diamond: ${userTag} used restart! It was... hopefully super effective!`, {file: backupFile, name: "Backup-" + thisBackupTime + ".sqlite"}).then(() => {
+            bot.createMessage(config.channels.modLogChannel, `:large_blue_diamond: ${userTag} used restart! It was... hopefully super effective!`, {file: backupFile, name: "Backup-" + backupFormattedTime + ".sqlite"}).then(() => {
               process.exit();
             });
             //restart the bot
@@ -58,7 +58,14 @@ let modCommands = {
           break;
 
         case "!stats":
+          modUtils.getStats (bot, channelID, userTag, userID, command, msg, trello, db, recievedMessage).then(statsObj => {
+            let statsFormattedTime = dateFormat(currentTime, "UTC:mm-dd-yyyy HH:MM:ss");
+            let statsEmbed = {
+              title: 'Stats over the last ' + statsObj.time + ' days:', description: `**Total times used:** ${statsObj.totalUsed}\n**Total number of approved reports:** ${statsObj.totalApp}\n**Total number of denied reports:** ${statsObj.totalDen}\n**iOS reports:** ${statsObj.ios}\n**Android reports:** ${statsObj.droid}\n**Linux reports:** ${statsObj.linux}\n**Canary reports:** ${statsObj.canary}`, color: 7506394, footer: {text: `Checked: ${statsFormattedTime} UTC`}
+            }
+            bot.createMessage(channelID, {content: " ", embed: statsEmbed});
 
+          })
           break;
 
         case "!backup":

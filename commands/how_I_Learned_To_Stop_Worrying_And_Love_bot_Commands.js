@@ -41,8 +41,7 @@ let fun = {
   roles: [
       config.roles.adminRole,
       config.roles.trelloModRole,
-      config.roles.devRole,
-      config.roles.hunterRole
+      config.roles.devRole
   ],
   channels: [
       config.channels.allChannels

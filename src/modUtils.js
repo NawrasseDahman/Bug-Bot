@@ -104,8 +104,8 @@ function getStats (bot, channelID, userTag, userID, command, msg, trello, db, ti
 
         if(time > ts) {
           infObj.totalUsed = ++infObj.totalUsed;
-          if(elm.reportStatus = 'trello') infObj.totalApp = ++infObj.totalApp;
-          if(elm.reportStatus = 'closed') infObj.totalDen = ++infObj.totalDen;
+          if(elm.reportStatus === 'trello') infObj.totalApp = ++infObj.totalApp;
+          if(elm.reportStatus === 'closed') infObj.totalDen = ++infObj.totalDen;
 
           switch (elm.cardID) {
             case config.cards.iosCard:

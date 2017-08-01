@@ -6,7 +6,7 @@ const fs = require('fs');
 const dateFormat = require('dateformat');
 
 let modCommands = {
-  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!stats|!backup|!log/i,
+  pattern: /!ping|!bug|!restart|!getuser|!getrepro|!getnumber|!report|!backup|!log/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
@@ -57,7 +57,7 @@ let modCommands = {
           });
           break;
 
-        case "!stats":
+        case "!report":
           modUtils.getStats (bot, channelID, userTag, userID, command, msg, trello, db, recievedMessage).then(statsObj => {
             let statsFormattedTime = dateFormat(currentTime, "UTC:mm-dd-yyyy HH:MM:ss");
             let statsEmbed = {

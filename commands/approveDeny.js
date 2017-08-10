@@ -30,7 +30,7 @@ let approveDeny = {
     let contentMessage = recievedMessage.match(/(\d*)\s*\|\s*([\s\S]*)/i);
 
     if(!contentMessage) {
-      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#312262075361787905> for full syntax", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#342060723721207810> for full syntax", command, msg.id, false);
       return;
     }
 
@@ -46,7 +46,7 @@ let approveDeny = {
         return;
       }
       if(command.toLowerCase() === "!approve" && reportInfo.userID === userID) { // check if user is trying to approve their own report
-        utils.botReply(bot, userID, channelID, "You can't approve your own report.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "you can't approve your own report.", command, msg.id, false);
         return;
       }
       if(reportInfo.reportStatus !== "queue") { // check if the report is in the queue, closed or sent to trello

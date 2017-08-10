@@ -27,6 +27,11 @@ function addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note,
 let addNote = {
   pattern: /!addnote|!note/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
+    if(channelID === config.channels.queueChannel) {
+      utils.botReply(bot, userID, channelID, "you cannot add notes to queue items.", command, msg.id);
+      return;
+    }
+
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
     let joinedMsg = messageSplit.join(' ');
@@ -83,7 +88,7 @@ let addNote = {
 
           addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note, trello);
         } else {
-          utils.botReply(bot, userID, channelID, "please provide a valid Trello URL or ID and make sure the report is not closed.", command, msg.id);
+          utils.botReply(bot, userID, channelID, "please provide a valid or Trello URL or ID and make sure the report is not closed.", command, msg.id);
           return;
         }
       });
@@ -99,7 +104,8 @@ let addNote = {
     config.channels.iosChannel,
     config.channels.canaryChannel,
     config.channels.androidChannel,
-    config.channels.linuxChannel
+    config.channels.linuxChannel,
+    config.channels.queueChannel
   ],
   acceptFromDM: false
 }

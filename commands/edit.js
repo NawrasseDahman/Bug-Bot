@@ -15,7 +15,7 @@ let edit = {
     let matchString = joinedMessage.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|\s*([\s\S]*)\s\|\s*([\s\S]*)/i);
 
     if(!matchString) {
-      utils.botReply(bot, userID, channelID, "please provide a URL, section you want to edit and your new content", command, msg.id);
+      utils.botReply(bot, userID, channelID, "please provide a URL or report number, the section you want to edit, and your new content.", command, msg.id);
       return;
     }
 
@@ -28,7 +28,7 @@ let edit = {
       let getPerms = msg.member.roles.indexOf(config.roles.devRole) && msg.member.roles.indexOf(config.roles.adminRole) && msg.member.roles.indexOf(config.roles.trelloModRole);
 
       if((!!report && report.userID !== userID) && getPerms === -1) {
-        utils.botReply(bot, userID, channelID, "only the reporter, or mods+ can modify reports", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "only the reporter, or Trello Mods+ can modify reports.", command, msg.id, false);
         return;
       }
 
@@ -38,7 +38,7 @@ let edit = {
 
       var matchFormat = editSection.match(/\b(header|title|short description|body|str|steps to reproduce|expected|expected result|actual|actual result|cs|client|client setting|ss|system|system setting)(s)?(:)?/i);
       if(!splitters || splitters.length !== 2){
-        utils.botReply(bot, userID, channelID, "please include two splitters, like this: `!edit <key/url> | <what part you want to change> | <the new content>`", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "please include two splitters, like this: `!edit <number/url> | <what part you want to change> | <the new content>`.", command, msg.id, false);
         return;
       }
       if(!matchFormat){
@@ -103,7 +103,7 @@ let edit = {
 
                 let editReport = oldReport.content.replace(newRegex, utils.toTitleCase(editSection) + ":** " + cleanNewContent);
                 bot.editMessage(config.channels.queueChannel, report.reportMsgID, editReport).then(() => {
-                  utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msg.id, false);
+                  utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated.", command, msg.id, false);
                   bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** edited **#" + key + "** `" + utils.toTitleCase(editSection) + "`");
                 }).catch((error) => {
                   console.log("Edit | msgQueue\n" + error);

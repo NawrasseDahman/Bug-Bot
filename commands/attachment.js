@@ -14,7 +14,7 @@ let attach = {
 
     let regexMsg = joinedMsg.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|?\s*([\s\S]*)/i);
     if(!regexMsg || !regexMsg[1]) {
-      utils.botReply(bot, userID, channelID, "please include a report key or trello url, and a attachment", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please include a report number or trello url, and an attachment.", command, msg.id, false);
       return;
     }
 
@@ -28,7 +28,7 @@ let attach = {
       let checkForYT = attachment.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/i);
       let checkForImage = attachment.match(/\bhttps?:\/\/\S+(?:png|jpg|jpeg|webp|gifv?)\b/i);
       if(!checkForImage && !checkForYT) {
-        utils.botReply(bot, userID, channelID, "please include a valid attachment", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "please include a valid attachment.", command, msg.id, false);
         return;
       }
       removeMsg = true;
@@ -47,7 +47,7 @@ let attach = {
       } else {
         db.get("SELECT trelloURL, reportStatus, reportMsgID, header FROM reports WHERE id = ?", [key], function(error, report) {
           if(!report){
-            utils.botReply(bot, userID, channelID, "please include a report key or trello url", command, msg.id, false);
+            utils.botReply(bot, userID, channelID, "please include a report number or trello url.", command, msg.id, false);
             return;
           }
 

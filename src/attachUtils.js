@@ -6,7 +6,7 @@ const customConfig = require("../configEdit");
 function attachUtils (bot, channelID, userTag, userID, command, msg, trello, trelloURL, attachment, removeMsg, urlDataName, reportMsgID) {
   let attachmentAttached = function(error, dataAttach) {
     if(!!error) {
-      utils.botReply(bot, userID, config.channels.modLogChannel, "Something went wrong by attaching, please notify the authorities <https://trello.com/c/" + trelloURL + ">", command, null, false);
+      utils.botReply(bot, userID, config.channels.modLogChannel, "Something went wrong by attaching, please notify the authorities <https://trello.com/c/" + trelloURL + ">.", command, null, false);
     }
 
     if(removeMsg === true) {

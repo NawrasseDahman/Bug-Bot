@@ -13,7 +13,7 @@ let storeSysInfo = {
     if(!contentInfo) {
       db.get("SELECT windows, ios, android, macOS, linux FROM users WHERE userid = ?", [userID], function(error, allInfo) {
         if(!allInfo) {
-          utils.botReply(bot, userID, channelID, "you have no specs stored, please include which client and your specs. Like so: `" + command + " -i | 10.0.1`. Check #bot-help for full list", command, msg.id);
+          utils.botReply(bot, userID, channelID, "you have no specs stored, please include which client and your specs. Like so: `" + command + " -i | 10.0.1`. Check <#342060723721207810> for full list", command, msg.id);
           return;
         }
 

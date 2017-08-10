@@ -98,12 +98,12 @@ let submitCommand = {
         let report = joinedMessage.substr(pipe + 1).trim();
 
         if(!splitter || splitter.length > 1) {
-          utils.botReply(bot, userID, channelID, "for help on the bot syntax, go to <#342060723721207810>", command, msg.id, true);
+          utils.botReply(bot, userID, channelID, "your syntax seems to be a bit off. Please read through <#342060723721207810> for a full explanation on my usage.", command, msg.id, true);
           return;
         }
 
         if(!header) {
-          utils.botReply(bot, userID, channelID, "please include a short description of your problem to use as a title!", command, msg.id, true);
+          utils.botReply(bot, userID, channelID, "please include a short description of your problem to use as a title! `<short descriptions of the problem>` followed by a pipe `|`!", command, msg.id, true);
           return;
         }
 
@@ -133,7 +133,7 @@ let submitCommand = {
           let checkMissing = !stepsToRepro || !expectedResult || !actualResult || !clientSetting || !sysSettings;
 
           if(checkMissing) {
-            utils.botReply(bot, userID, channelID, "remember to fill in all the required fields!", command, msgID, true);
+            utils.botReply(bot, userID, channelID, "remember to fill in all the required fields! If you're struggling with the syntax, maybe give this tool a try: <https://dabbit.typeform.com/to/mnlaDU>", command, msgID, true);
             return;
           }
 

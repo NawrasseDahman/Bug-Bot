@@ -188,7 +188,7 @@ bot.on('messageCreate', (msg) => {
 
 // Tell the user that they can only post commands in the reporting channel
 function delMsgInReportingChannel(channelID, userID) {
-  bot.createMessage(channelID, "<@" + userID + "> only bot-commands are allowed in this channel. Please review #bot-help if you're unsure of the commands.").then(utils.delay(customConfig.delayInS)).then((msgInfo) => {
+  bot.createMessage(channelID, "<@" + userID + "> only bot-commands are allowed in this channel. Please review <#342060723721207810> if you're unsure of the commands.").then(utils.delay(customConfig.delayInS)).then((msgInfo) => {
     bot.deleteMessage(channelID, msgInfo.id);
   }); // Needs text for user reply when chatting in bug reporting channel
   delMsgCooldown = true;

@@ -30,7 +30,7 @@ let approveDeny = {
     let contentMessage = recievedMessage.match(/(\d*)\s*\|\s*([\s\S]*)/i);
 
     if(!contentMessage) {
-      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#342060723721207810> for full syntax", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#342060723721207810> for full syntax.", command, msg.id, false);
       return;
     }
 
@@ -50,7 +50,7 @@ let approveDeny = {
         return;
       }
       if(reportInfo.reportStatus !== "queue") { // check if the report is in the queue, closed or sent to trello
-        utils.botReply(bot, userID, channelID, "this report has already been moved", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "this report has already been moved.", command, msg.id, false);
         return;
       }
 
@@ -59,7 +59,7 @@ let approveDeny = {
       let ADcontent = cleanContent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
       if(!cleanContent) {
-        utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to #Bot-Help for more info", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to <#342060723721207810> for more info.", command, msg.id, false);
         return;
       } else if(!!whichClient) {
         whichClient[1] = whichClient[1].toLowerCase();
@@ -84,7 +84,7 @@ let approveDeny = {
             ADcontent = info.replace(/(?:\B)(-l|-m|-w|-a|-i)(?:\b)/i, usrSys[system]);
             addApproval (bot, channelID, userTag, userID, command, msg, db, key, ADcontent, reportInfo, trello);
           } else {
-            utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!storeinfo " + whichClient[1] + " | system info`", command, msg.id, false);
+            utils.botReply(bot, userID, channelID, "doesn't seem like you have that client in our database. You can add it with `!storeinfo " + whichClient[1] + " | system info`.", command, msg.id, false);
             return;
           }
         });

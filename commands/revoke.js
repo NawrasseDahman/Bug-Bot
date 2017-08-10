@@ -23,7 +23,7 @@ let revoke = {
       } else if(!!reportInfo && reportInfo.reportStatus !== "queue") {
         //report has been moved or closed
         //reply
-        utils.botReply(bot, userID, channelID, "the report has already been moved or closed", command, msg.id);
+        utils.botReply(bot, userID, channelID, "the report has already been moved or closed.", command, msg.id);
         return;
       }
 
@@ -32,11 +32,11 @@ let revoke = {
         let split = oldReport[1];
         let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
         let newRegex = new RegExp(pattern, "i");
-        
+
         let matchTick = split.match(newRegex);
         if(!matchTick) {
           //reply user has not approved or denied this report
-          utils.botReply(bot, userID, channelID, "you haven't given your input on this report yet", command, msg.id);
+          utils.botReply(bot, userID, channelID, "you haven't given your input on this report yet.", command, msg.id);
           return;
         }
 
@@ -57,7 +57,7 @@ let revoke = {
             console.log(err);
           }
           bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).then(() => {
-            utils.botReply(bot, userID, channelID, "you have successfully removed your input on **#" + key + "**", command, msg.id);
+            utils.botReply(bot, userID, channelID, "you have successfully removed your input on **#" + key + "**.", command, msg.id);
             bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + utils.cleanUserTag(userTag) + "** removed their input on **#" + key + "**");
           }).catch(err => {console.log("edit out - revoke\n" + err);});
         });

@@ -103,10 +103,10 @@ function preCheckReproSetup(bot, reportKey, reproCnt, reproduction, userTag, cha
     trello.get("/1/cards/" + reportKey, {}, function(errorURL, urlData) {
       if(!!urlData){
         if(!urlData.desc) {
-          utils.botReply(bot, userID, channelID, "Something seems to have gone wrong, please try again", command, msgID, false);
+          utils.botReply(bot, userID, channelID, "something seems to have gone wrong, please try again.", command, msgID, false);
         }
         if(!urlData.id) {
-          utils.botReply(bot, userID, channelID, "incorrect url.", command, msgID, false);
+          utils.botReply(bot, userID, channelID, "that URL doesn't seem to be valid. Please double check it.", command, msgID, false);
           return;
         }
         if(urlData.closed === true) {

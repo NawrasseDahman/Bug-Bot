@@ -39,7 +39,7 @@ let addNote = {
     let matchContent = joinedMsg.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|\s*([\s\S]*)/i);
 
     if(!matchContent || !matchContent[1] || !matchContent[2] || matchContent[1] === matchContent[2]) {
-      utils.botReply(bot, userID, channelID, "please provide a note & valid queue ID or Trello URL", command, msg.id);
+      utils.botReply(bot, userID, channelID, "please provide a note & valid queue ID or Trello URL.", command, msg.id);
       return;
     }
 

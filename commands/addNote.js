@@ -27,6 +27,11 @@ function addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note,
 let addNote = {
   pattern: /!addnote|!note/i,
   execute: function(bot, channelID, userTag, userID, command, msg, trello, db) {
+    if(channelID === config.channels.queueChannel) {
+      utils.botReply(bot, userID, channelID, "you cannot add notes to queue items.", command, msg.id);
+      return;
+    }
+
     let messageSplit = msg.content.split(' ');
     messageSplit.shift();
     let joinedMsg = messageSplit.join(' ');
@@ -68,18 +73,6 @@ let addNote = {
 
           db.run("INSERT INTO reportQueueInfo (id, userID, userTag, info, stance) VALUES (?, ?, ?, ?, ?)", [key, userID, userTag, note, "note"]);
           addNoteTrello(bot, channelID, userTag, userID, command, msg, reportInfo.trelloURL, note, trello);
-        } else if(!!reportInfo && (!urlData || !urlData.id) && reportInfo.reportStatus === "queue") { // In database but not Trello (in queue)
-          bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
-            if(!!reportMsg) {
-              let splitMsg = reportMsg.content.split("Report ID: **" + key + "**");
-              let editMsgCreate = splitMsg[0] + "Report ID: **" + key + "**\n:pencil: **" + utils.cleanUserTag(userTag) + "**: `" + note + "`" + splitMsg[1];
-
-              bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, editMsgCreate).catch((err) => {console.log("editMsg Chat queue\n" + err);});
-            }
-          }).catch((error) => {console.log("AddNote Queue MsgEdit\n" + error);}); //Queue
-
-          db.run("INSERT INTO reportQueueInfo (id, userID, userTag, info, stance) VALUES (?, ?, ?, ?, ?)", [key, userID, userTag, note, "note"]);
-          utils.botReply(bot, userID, channelID, "you've added a note to **#" + key + "**", command, msg.id);
         } else if(!reportInfo && !!urlData && urlData.closed === false) { // In Trello but not database (legacy reports)
           bot.getMessages(channelID).then((allMsgs) => {
             let reportMsg = allMsgs.find(function(thisMsg) {
@@ -95,7 +88,7 @@ let addNote = {
 
           addNoteTrello(bot, channelID, userTag, userID, command, msg, key, note, trello);
         } else {
-          utils.botReply(bot, userID, channelID, "please provide a valid queue ID or Trello URL and make sure the report is not closed.", command, msg.id);
+          utils.botReply(bot, userID, channelID, "please provide a valid or Trello URL or ID and make sure the report is not closed.", command, msg.id);
           return;
         }
       });

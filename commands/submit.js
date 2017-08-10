@@ -98,7 +98,7 @@ let submitCommand = {
         let report = joinedMessage.substr(pipe + 1).trim();
 
         if(!splitter || splitter.length > 1) {
-          utils.botReply(bot, userID, channelID, "please include **one** pipe `|`", command, msg.id, true);
+          utils.botReply(bot, userID, channelID, "for help on the bot syntax, go to <#342060723721207810>", command, msg.id, true);
           return;
         }
 
